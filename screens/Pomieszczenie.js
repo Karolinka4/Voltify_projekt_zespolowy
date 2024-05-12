@@ -84,6 +84,7 @@ const Pomieszczenie = ({deviceData}) => {
         >
           <Pressable style={[styles.pressable, styles.pressableLayout]} />
         </LinearGradient>
+
         <ScrollView
           style={styles.pomieszczenieInner}
           horizontal={true}

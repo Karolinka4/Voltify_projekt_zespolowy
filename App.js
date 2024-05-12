@@ -31,7 +31,13 @@ import DodajZarowke from './components/DodajZarowke';
 import DodajGniazdko from './components/DodajGniazdko';
 import Wykres from './components/Wykres';
 import LicznikEn from './components/LicznikEn';
-
+import Logowanie from './screens/Logowanie'; // Zaimportuj ekran logowania
+import Rejestracja from './screens/Rejestracja'; // Zaimportuj ekran rejestracji
+import Instrukcja1 from './screens/Instrukcja1';
+import Instrukcja2 from './screens/Instrukcja2';
+import Instrukcja3 from './screens/Instrukcja3';
+import Instrukcja4 from './screens/Instrukcja4';
+import Instrukcja5 from './screens/Instrukcja5';
 
 
 const Stack = createNativeStackNavigator();
@@ -120,6 +126,13 @@ const App = () => {
     <NavigationContainer>
       {hideSplashScreen ? (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Logowanie" component={Logowanie} />
+        <Stack.Screen name="Rejestracja" component={Rejestracja} />
+        <Stack.Screen name="Instrukcja1" component={Instrukcja1} />
+        <Stack.Screen name="Instrukcja2" component={Instrukcja2} />
+        <Stack.Screen name="Instrukcja3" component={Instrukcja3} />
+        <Stack.Screen name="Instrukcja4" component={Instrukcja4} />
+        <Stack.Screen name="Instrukcja5" component={Instrukcja5} />
         <Stack.Screen name="BottomTabsRoot" component={BottomTabsRoot} />
         <Stack.Screen name="Steruj" component={Steruj} />
         <Stack.Screen name="Pokoj" component={Pokoj} />
@@ -136,9 +149,6 @@ const App = () => {
          <Stack.Screen name="WszystkieUrzadzenia" component={WszystkieUrzadzenia} />
           </Stack.Navigator>
       ) : null}
-
-
-
     </NavigationContainer>
   );
 };
