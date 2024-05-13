@@ -63,19 +63,17 @@ const Instrukcja5 = () => {
       >
         <Text style={[styles.skip, styles.skipFlexBox1]}>Back</Text>
       </Pressable>
-     <Pressable
-            style={styles.instrukcja5Inner}
-            onPress={() => navigation.navigate("BottomTabsRoot")}
-          >
-            <View style={styles.rectangleParent}>
-              <LinearGradient
-                style={styles.rectangleLineargradient}
-                locations={[0, 1]}
-                colors={["#01bf64", "#137848"]}
-              />
-              <Text style={[styles.start, styles.startTypo]}>Start</Text>
-            </View>
-          </Pressable>
+       <Pressable
+              style={[styles.start]}
+              onPress={() => navigation.navigate("BottomTabsRoot")}
+            >
+               <Image
+                        style={[styles.start]}
+                        contentFit="cover"
+                        source={require("../assets/Gradient.png")}
+                      />
+            </Pressable>
+
     </View>
   );
 };
@@ -97,68 +95,26 @@ const styles = StyleSheet.create({
 
 
     },
-     rectangleView: {
-        shadowColor: "rgba(0, 0, 0, 0.25)",
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowRadius: 4,
-        elevation: 4,
-        shadowOpacity: 1,
-        backgroundColor: Color.colorMediumseagreen,
-        width: 30,
-        borderRadius: Border.br_11xl,
-      },
 
-  rectangleLineargradient: {
-    top: 0,
-    left: 4,
-    width: 105,
-    backgroundColor: "transparent",
-    height: 55,
-    borderRadius: Border.br_11xl,
-    position: "absolute",
-  },
-   startTypo: {
-      fontFamily: FontFamily.latoBold,
-      textAlign: "center",
-      lineHeight: 20,
-      letterSpacing: 0,
-    },
+
   start: {
-    top: 16,
-    left: 0,
+    top: 85,
+    left: 110,
     fontSize: 20,
     fontWeight: "600",
     color: Color.colorWhite,
-    height: 34,
+    height: 64,
     width: 114,
-    position: "absolute",
-  },
-
-  instrukcja5Inner: {
-    top: 765,
-    left: 278,
-    position: "absolute",
+    //position: "absolute",
   },
 
 
-      ellipseParent: {
-        marginTop: 253,
-        marginLeft: -54,
-        left: "50%",
-        position: "absolute",
-      },
-        backWrapperFlexBox1: {
-          flexDirection: "row",
-          top: "50%",
-        },
 
   skipWrapperPosition: {
     flexDirection: "row",
-    top: "50%",
+    top: "80%",
     position: "absolute",
+    left: 120,
   },
   frameSpaceBlock: {
     marginLeft: 6,
@@ -180,7 +136,7 @@ const styles = StyleSheet.create({
     color: Color.colorGray,
     width: 290,
     height: 160,
-    marginTop: 20,
+    marginTop: 30,
   },
   parent: {
     top: 130,
@@ -219,16 +175,16 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.latoLight,
     color: Color.colorDarkgray,
   },
+  //back
   skipWrapper: {
-    marginTop: 295,
+    marginTop: 65,
     width: "17.91%",
-    right: "73.14%",
-    left: "9.95%",
+    marginLeft: -80,
     backgroundColor: Color.colorGainsboro,
     justifyContent: "center",
     paddingHorizontal: Padding.p_2xs,
     paddingVertical: Padding.p_5xs,
-    alignItems: "center",
+    //alignItems: "center",
     overflow: "hidden",
   },
   icon1: {

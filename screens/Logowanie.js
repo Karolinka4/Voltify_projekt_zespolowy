@@ -6,7 +6,10 @@ import {
   View,
   TextInput,
   Pressable,
-
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
@@ -17,8 +20,10 @@ const Logowanie = () => {
   const navigation = useNavigation();
 
   return (
-
-
+    <KeyboardAvoidingView
+     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.logowanie}>
       <ImageBackground
         style={styles.logo1Icon}
@@ -55,6 +60,7 @@ const Logowanie = () => {
           style={styles.adresEMail}
           placeholder="Hasło"
           placeholderTextColor="#a8a8a8"
+           secureTextEntry={true}
         />
       </View>
       <View style={[styles.mail1, styles.mailPosition]}>
@@ -86,11 +92,15 @@ const Logowanie = () => {
         </Text>
       </Pressable>
     </View>
-
+    </TouchableWithoutFeedback>
+</KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+    },
   logowanieLayout: {
     maxHeight: "100%",
     maxWidth: "100%",
@@ -103,6 +113,7 @@ const styles = StyleSheet.create({
     width: "77.44%",
     left: "11.4%",
     position: "absolute",
+    marginTop: -55,
   },
   mailChildPosition: {
     backgroundColor: Color.colorGainsboro_100,
@@ -127,6 +138,7 @@ const styles = StyleSheet.create({
   logowanie1Layout: {
     height: "5.04%",
     position: "absolute",
+    marginTop: -50,
   },
   zalogujSiTypo: {
     fontFamily: FontFamily.latoBold,
@@ -134,6 +146,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     position: "absolute",
   },
+  //logo
   logo1Icon: {
     height: "53.65%",
     top: "-9.01%",
@@ -144,11 +157,11 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 120,
   },
-   //pozycja facebook, googla, appla
+   //pozycja facebook, googla, appla, kreski
   logowanieChild: {
     height: "0.8%",
     width: "69.3%",
-    top: "60.72%",
+    top: "53.72%",
     right: "15.35%",
     bottom: "39.27%",
     marginTop: -2,
@@ -156,12 +169,12 @@ const styles = StyleSheet.create({
 
   //pozycja facebook, googla, appla
   logowanieItem: {
-    height: "7.5%",
-    width: "59.67%",
-    top: "65.77%",
+    height: "6.5%",
+    width: "62%",
+    top: "56.77%",
     right: "26.74%",
     bottom: "29.08%",
-    left: "21.58%",
+    left: "19.58%",
   },
   kontynuujcAkceptujesz: {
     color: Color.colorGray_100,
@@ -172,7 +185,7 @@ const styles = StyleSheet.create({
   kontynuujcAkceptujeszWarunContainer: {
     height: "8.8%",
     width: "76.28%",
-    top: "74.36%",
+    top: "64.36%",
     left: "13.51%",
     textAlign: "center",
     letterSpacing: 0,
@@ -183,7 +196,7 @@ const styles = StyleSheet.create({
   niePosiadaszKonta: {
     height: "3%",
     width: "43.72%",
-    top: "85.19%",
+    top: "75.19%",
     fontSize: FontSize.size_sm,
     textAlign: "left",
     color: Color.colorBlack,
@@ -195,7 +208,7 @@ const styles = StyleSheet.create({
   },
   niePamitaszHasa: {
     height: "2.68%",
-    top: "46%",
+    top: "40%",
     width: "77.44%",
     textAlign: "left",
     color: Color.colorBlack,
@@ -215,9 +228,9 @@ const styles = StyleSheet.create({
   adresEMail: {
     height: "81.03%",
     width: "96.73%",
-    top: "1.07%",
+    top: "5.07%",
     left: "4.19%",
-    fontSize: FontSize.size_base,
+    fontSize: 16,
     fontFamily: FontFamily.latoRegular,
     position: "absolute",
   },
@@ -235,12 +248,12 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   lub: {
-    height: "80.56%",
+    height: "60.56%",
     width: "82.61%",
     left: "8.7%",
     fontSize: FontSize.size_lg,
     color: "#dadada",
-    top: "0%",
+    top: "10%",
     fontFamily: FontFamily.latoBold,
     fontWeight: "700",
     textAlign: "center",
@@ -251,7 +264,7 @@ const styles = StyleSheet.create({
   rectangleParent: {
     height: "3.86%",
     width: "16.05%",
-    top: "59.15%",
+    top: "52.15%",
     right: "42.09%",
     bottom: "37.98%",
     left: "41.86%",
@@ -264,7 +277,7 @@ const styles = StyleSheet.create({
   zarejestrujSi: {
     height: "74.47%",
     width: "64.04%",
-    top: "25.53%",
+    top: "15.53%",
     left: "18.72%",
     fontSize: FontSize.size_xl,
     textDecorationLine: "underline",
@@ -275,7 +288,7 @@ const styles = StyleSheet.create({
   //napis zarejestruj sie
   rectangleGroup: {
     width: "57.21%",
-    top: "83.15%",
+    top: "79.15%",
     right: "1%",
     bottom: "11.8%",
     left: "46.16%",
@@ -290,7 +303,7 @@ const styles = StyleSheet.create({
     width: "96.71%",
     top: "20.64%",
     left: "1.63%",
-    fontSize: FontSize.size_3xl,
+    fontSize: 18,
     fontWeight: "600",
     color: Color.colorWhite,
   },
@@ -303,7 +316,7 @@ const styles = StyleSheet.create({
 
   },
   logowanie: {
-    flex: 1,
+    //flex: 1,
     height: 932,
     overflow: "hidden",
     width: "100%",

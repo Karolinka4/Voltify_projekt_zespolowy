@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, StyleSheet, View, TextInput, Pressable } from "react-native";
+import { Text, StyleSheet, View, TextInput, Pressable,   KeyboardAvoidingView,TouchableWithoutFeedback,  Keyboard, Platform, } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import Instrukcja1 from "./Instrukcja1";
@@ -8,6 +8,10 @@ const Rejestracja = () => {
   const navigation = useNavigation();
 
   return (
+  <KeyboardAvoidingView
+       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+       style={styles.container}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View style={styles.rejestracja}>
       <Text style={styles.posiadaszJuKonto}>Posiadasz już konto?</Text>
       <View style={[styles.mail, styles.mailPosition]}>
@@ -24,6 +28,7 @@ const Rejestracja = () => {
           style={styles.adresEMail}
           placeholder="Hasło"
           placeholderTextColor="#a8a8a8"
+          secureTextEntry={true}
         />
       </View>
       <View style={[styles.rectangleParent, styles.mailPosition]}>
@@ -60,10 +65,17 @@ const Rejestracja = () => {
         </Text>
       </Pressable>
     </View>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+
+  container: {
+      flex: 1,
+    },
+
   mailPosition: {
     right: "11.16%",
     width: "77.44%",
@@ -110,10 +122,10 @@ const styles = StyleSheet.create({
   adresEMail: {
     height: "81.03%",
     width: "96.73%",
-    top: "12.07%",
+    top: "9.07%",
     left: "4.19%",
     fontFamily: FontFamily.latoRegular,
-    fontSize: FontSize.size_base,
+    fontSize: 16,
     position: "absolute",
   },
   mail: {
@@ -162,7 +174,7 @@ const styles = StyleSheet.create({
   zarejestrujSi: {
     height: "6.97%",
     width: "68.37%",
-    top: "13.77%",
+    top: "15.77%",
     left: "15.81%",
     fontSize: 38,
     color: Color.colorBlack,
@@ -181,7 +193,7 @@ const styles = StyleSheet.create({
   zalogujSi1: {
     height: "79.31%",
     width: "96.72%",
-    top: "20.69%",
+    top: "30.69%",
     left: "1.62%",
     fontSize: 18,
     color: Color.colorWhite,
@@ -197,7 +209,7 @@ const styles = StyleSheet.create({
   },
   rejestracja: {
     backgroundColor: Color.colorWhite,
-    flex: 1,
+    //flex: 1,
     height: 932,
     overflow: "hidden",
     width: "100%",
