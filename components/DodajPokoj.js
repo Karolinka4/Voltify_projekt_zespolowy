@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Button, TextInput, StyleSheet, Image, Alert, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {BACKEND_API_URL} from '@env';
-
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 /*
 ##########################################################################
 Wygląd edycji dodawania pokoju
@@ -15,8 +15,14 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
   const [name, setName] = useState('');
   const [image, setImage] = useState(null);
   const [showImage, setShowImage] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
+
+  getDataFromStorage('@myKey').then((data) => {
+    setUserId(data.Key);
+  });
+
     if (editRoom) {
       setName(editRoom.name);
       setImage(editRoom.image);
@@ -46,11 +52,10 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
   };
 
    const addRoomToServer = async(name) => {  //192.168.1.12
-   const url = `${BACKEND_API_URL}/add-room`;//http://localhost:5000/add-room
+   const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;//http://localhost:5000/add-room
    let data = {
-    user_id: "1",//           ############################## to jest przypisanie na stałe, po dodaniu logowania będzie trzeba to zmienić
-    room_name: name,
-    url: image
+    name: name,
+    //url: image            //Jeszcze tego nie ma
    };
     try{
         const response = await fetch(url, {

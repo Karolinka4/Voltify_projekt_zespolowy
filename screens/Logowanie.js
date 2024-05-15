@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -12,12 +12,20 @@ import {
   Platform,
 } from "react-native";
 import { Image } from "expo-image";
+import { storeDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import Instrukcja1 from "./Instrukcja1";
 
 const Logowanie = () => {
   const navigation = useNavigation();
+  const [Key, setKey] = React.useState('1');
+
+    useEffect(() => {
+      // Przykład użycia funkcji do zapisu i odczytu danych
+      storeDataFromStorage('@myKey', { Key });
+
+    }, []);
 
   return (
     <KeyboardAvoidingView

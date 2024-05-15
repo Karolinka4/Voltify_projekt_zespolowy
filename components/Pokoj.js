@@ -14,7 +14,7 @@ const Pokoj = ({ rooms, onDelete, onEdit }) => {
       renderItem={({ item }) => (
         <View style={styles.itemContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Pomieszczenie', {
-            name: item.room_name,
+            name: item.name,
             image: item.url,
             roomId: item.id
           })}>
@@ -24,7 +24,7 @@ const Pokoj = ({ rooms, onDelete, onEdit }) => {
           {/* Umieszczamy BlurView tylko pod tekstem i przyciskami */}
           <View style={styles.textAndButtonsContainer}>
             <BlurView intensity={140} style={styles.blurContainer}>
-              <Text style={styles.roomName}>{item.room_name}</Text>
+              <Text style={styles.roomName}>{item.name}</Text>
               <View style={styles.buttonsContainer}>
                <TouchableOpacity style={styles.button} onPress={() => onEdit(item)}>
                  <Text style={[styles.buttonText, styles.editButton]}>Edytuj</Text>

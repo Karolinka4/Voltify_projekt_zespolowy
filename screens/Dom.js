@@ -5,6 +5,7 @@ import Pokoj from '../components/Pokoj';
 import DodajPokoj from '../components/DodajPokoj';
 import { useNavigation } from "@react-navigation/native";
 import WszystkieUrzadzenia from '../screens/WszystkieUrzadzenia';
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 /*
 ##########################################################################
 Wygląd Domku odrazu po odpaleniu aplikacji czyli bez żadnego pokoju
@@ -17,11 +18,21 @@ export default function Dom() {
   const [rooms, setRooms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [editRoom, setEditRoom] = useState(null);
+  const [userId, setUserId] = useState(null);
 
+  useEffect(() => {
+    // Przykład użycia funkcji do zapisu i odczytu danych
+
+    getDataFromStorage('@myKey').then((data) => {
+        setUserId(data.Key);
+    });
+  }, []);
+
+//@@@@@@@@@@@@@@@@@@@@@@@ może [userId, rooms] trzeba dopisać rooms
    useEffect(() => {
        const fetchRooms = async () => {
-         const url = `${BACKEND_API_URL}/rooms/1`;// ########### tutaj też jest na stałe przypisana 1
-
+         const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;// ########### tutaj też jest na stałe przypisana 1
+         console.log(url);
          try {
            const response = await fetch(url, {
              method: 'GET',
@@ -30,7 +41,7 @@ export default function Dom() {
              },
            });
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok: ' + response);
         }
 
         const roomsData = await response.json();
@@ -39,9 +50,10 @@ export default function Dom() {
         console.error('There was a problem with the fetch operation:', error);
       }
     };
-
-    fetchRooms();
-  }, [rooms]);
+    if (userId) {
+      fetchRooms();
+    }
+  }, [userId]);
 
   const handleAddRoom = (room) => {
     setRooms(prevRooms => [...prevRooms, room]);

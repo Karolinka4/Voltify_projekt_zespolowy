@@ -7,6 +7,7 @@ import { StyleSheet, Text, View, Pressable, ScrollView, Modal, TouchableOpacity 
 import { LinearGradient } from "expo-linear-gradient";
 import { Color, Padding, FontFamily, Border, FontSize } from "../GlobalStyles";
 import Urzadzenia from "../components/Urzadzenia";
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 
 
 /*
@@ -25,17 +26,25 @@ const Pomieszczenie = ({deviceData}) => {
     const route = useRoute();
     const { name, image, roomId } = route.params;
     const navigation = useNavigation();
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-//        fetch(`${BACKEND_API_URL}/devices/1/${roomId}`)//### Ten użytkownik nr 1 jest na sztywno
-//              .then(response => response.json())
-//              .then(data => {
-//                setDevices(data); // Assuming the server response is the array of devices
-//              })
-//              .catch(error => {
-//                console.error('Error fetching data: ', error);
-//              });
-    }, []);
+
+        getDataFromStorage('@myKey').then((data) => {
+            setUserId(data.Key);
+        });
+
+        if (userId)
+        {
+        fetch(`${BACKEND_API_URL}/api/account/${userId}/room/${roomId}/`)//### Ten użytkownik nr 1 jest na sztywno
+              .then(response => response.json())
+              .then(data => {
+                setDevices(data.devices); // Assuming the server response is the array of devices
+              })
+              .catch(error => {
+                console.error('Error fetching data: ', error);
+             });}
+    }, [userId]);
 
 
   return (
@@ -45,7 +54,7 @@ const Pomieszczenie = ({deviceData}) => {
     <>
      <View>
               {devices.map(device => (
-                <Text key={device.id}>{device.nazwa}</Text>
+                <Text key={device.id}>{device.name}</Text>
               ))}
             </View>
        <Urzadzenia
@@ -63,7 +72,7 @@ const Pomieszczenie = ({deviceData}) => {
           <Text style={[styles.dodane, styles.arwkaTypo]}>Dodane:</Text>
          {/* Tutaj są wyswietlane urzadzenia w pokoju(Kafelki) */}
          {devices?.map((device, index) => (
-           <Text key={index}>{device.nazwa} - Klasa: {device.name}, Taryfa: {device.taryfa}, ID: {device.id}</Text>
+           <Text key={index}>{device.name} - Klasa: {device.name}, Taryfa: {device.taryfa}, ID: {device.id}</Text>
          ))}
         </View>
         <View style={[styles.dodajUrzdzeniaWrapper, styles.wrapperFlexBox]}>
