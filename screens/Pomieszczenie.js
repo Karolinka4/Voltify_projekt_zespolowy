@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   }, //ustawnienie okienka z żarówką wraz z żarówką
   framePressable: {
     left: 120,
-    marginTop: -170,
+    marginTop: -160,
   },
   //gniazdkoi ikona
   gniazdkoIcon: {
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   }, //ustawienia całego okienka gniazdka
   pomieszczenieInner1: {
     left: 12,
-     marginTop: -170,
+     marginTop: -160,
   },
   pomieszczenie: {
     backgroundColor: Color.colorWhite,
