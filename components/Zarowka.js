@@ -48,6 +48,7 @@ const setBulbBrightness = async (brightnessValue) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        id: bulbId,
         brightness: brightnessValue*10,
       }),
     });
