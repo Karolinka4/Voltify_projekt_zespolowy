@@ -1,25 +1,70 @@
 import * as React from "react";
-import {useState} from'react';
+import {useState, useEffect} from'react';
 import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
+import {BACKEND_API_URL} from '@env';
+import { useNavigation } from '@react-navigation/native';
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+
 /*
 ##########################################################################
 Wygląd Gniazdka
 ###########################################################################
-
 */
 
 
 const Gniazdko = () => {
-
+  const navigation = useNavigation();
  // Stan do śledzenia, czy przycisk jest wciśnięty
   const [isPressed, setIsPressed] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    // Przykład użycia funkcji do odczytu danych
+    getDataFromStorage('@myKey').then((data) => {
+        setUserId(data.Key);
+    });
+  }, []);
 
   // Funkcja zmieniająca stan
   const togglePress = () => {
-    setIsPressed(!isPressed);
+    if (isPressed) {
+      turnOffPlug(); // Wyłącz gniazdko, jeśli jest włączone
+    } else {
+      turnOnPlug(); // Włącz gniazdko, jeśli jest wyłączone
+    }
+    setIsPressed(!isPressed); // Zaktualizuj stan
   };
+
+const turnOnPlug = async () => {
+  const plugId = '2';
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${plugId}/on/`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+const turnOffPlug = async () => {
+  const plugId = '2';
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${plugId}/off/`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
 
 
@@ -52,11 +97,13 @@ const Gniazdko = () => {
         />
         <Text style={[styles.action, styles.actionTypo]}>Energy</Text>
       </Pressable>
+       <Pressable onPress={() => navigation.goBack()}>
       <Image
         style={[styles.strzakabbIcon, styles.iconLayout1]}
         resizeMode="cover"
         source={require("../assets/strzakabb2.png")}
       />
+      </Pressable>
       <View style={[styles.przyciskOnbb, styles.rectanglePosition]}>
         <Pressable style={[styles.przyciskOnoff, styles.przyciskPosition]} onPress={togglePress}>
           <Image
@@ -64,6 +111,7 @@ const Gniazdko = () => {
             resizeMode="cover"
             source={ require("../assets/ellipse-331.png")}
           />
+
           <Image
             style={[styles.przyciskOnoffItem, styles.iconLayout1]}
             resizeMode="cover"
@@ -89,6 +137,7 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
     maxHeight: "100%",
     overflow: "hidden",
+
   },
   rectanglePosition: {
     bottom: "12.44%",
@@ -211,13 +260,13 @@ const styles = StyleSheet.create({
   },
 
   strzakabbIcon: {
-    height: "7%",
+    height: "26%",
     width: "15%",
-    top: "8.57%",
+    top: "35%",
     right: "79.49%",
     bottom: "88.63%",
     left: "9%",
-    maxHeight: "100%",
+   // maxHeight: "100%",
   },
   przyciskOnoffChild: {
     maxHeight: "100%",

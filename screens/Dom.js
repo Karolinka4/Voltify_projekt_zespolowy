@@ -21,8 +21,7 @@ export default function Dom() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Przykład użycia funkcji do zapisu i odczytu danych
-
+    // Przykład użycia funkcji odczytu danych
     getDataFromStorage('@myKey').then((data) => {
         setUserId(data.Key);
     });
@@ -32,7 +31,6 @@ export default function Dom() {
    useEffect(() => {
        const fetchRooms = async () => {
          const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;// ########### tutaj też jest na stałe przypisana 1
-         console.log(url);
          try {
            const response = await fetch(url, {
              method: 'GET',

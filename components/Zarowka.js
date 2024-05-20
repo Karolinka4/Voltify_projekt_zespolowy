@@ -1,11 +1,13 @@
 import * as React from "react";
-import {useState} from'react';
+import {useState, useEffect} from'react';
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from '@react-navigation/native';
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import Slider from '@react-native-community/slider';
-
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+import {BACKEND_API_URL} from '@env';
 
 /*
 ##########################################################################
@@ -14,21 +16,95 @@ Wygląd Żarówki
 */
 
 const Zarowka = () => {
-
+  const navigation = useNavigation();
   const [brightness, setBrightness] = useState(1); // Zakładamy, że 1 to pełna jasność
   const [isPressed, setIsPressed] = useState(false);
+  const [userId, setUserId] = useState(null);
   const [brightnessOff, setBrightnessOff] = useState(0); //Jest potrzebne, żeby Ci nie skakało, rozwiązanie zrobione na kolanie
-  // Funkcja zmieniająca stan
-  const togglePress = () => {
-    setIsPressed(!isPressed);
-  };
+
+ useEffect(() => {
+    // Przykład użycia funkcji do odczytu danych
+    getDataFromStorage('@myKey').then((data) => {
+        setUserId(data.Key);
+    });
+  }, []);
+
+    const togglePress = async () => {
+      setIsPressed(!isPressed); // Zaktualizuj stan
+      if (!isPressed) {
+        await turnOnBulb(); // Włącz żarówkę, jeśli jest wyłączona
+      } else {
+        await turnOffBulb(); // Wyłącz żarówkę, jeśli jest włączona
+      }
+    };
+
+
+const setBulbBrightness = async (brightnessValue) => {
+  const bulbId = '4'; // Przykładowe ID żarówki, które powinno być dostosowane do Twojego przypadku
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/brightness/`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        brightness: brightnessValue*10,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    // Tutaj możesz dodać kod do obsługi odpowiedzi, np. aktualizacji stanu UI
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+
+const turnOnBulb = async () => {
+  const bulbId = '4';
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/on/`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+const turnOffBulb = async () => {
+  const bulbId = '4';
+  try {
+    const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/off/`, {
+      method: 'GET',
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
   return (
     <View style={styles.zarowka}>
       <View style={styles.zarowkaChild} />
       <View style={styles.arwka1Wrapper}>
         <Text style={styles.arwka1}>Zarowka1</Text>
+         <Pressable onPress={() => navigation.goBack()}>
+            <Image
+              style={[styles.strzakabbIcon, styles.frameIconLayout]}
+              resizeMode="cover"
+              source={require("../assets/strzakabb1.png")}
+             />
+          </Pressable>
+
       </View>
+
       <View style={styles.ellipseParent}>
         <Image
           style={[styles.frameChild, styles.frameIconLayout]}
@@ -55,7 +131,11 @@ const Zarowka = () => {
     minimumTrackTintColor="#C1C1C0"
     maximumTrackTintColor="#E2E2E2"
     value={brightness}
-    onValueChange={setBrightness}
+    onValueChange={(value) => {
+        setBrightness(value); // Aktualizacja lokalnego stanu jasności
+        setBulbBrightness(value); // Wysłanie żądania do serwera w celu zmiany jasności żarówki
+     }}
+
   /> : <Slider
            style={styles.sliderOff}
            minimumValue={0.2}
@@ -79,6 +159,7 @@ const Zarowka = () => {
           locations={[0, 1]}
           colors={["#060805", "#060805"]}
         />
+
         <Pressable style={[styles.rectangleParent, styles.rectanglePosition]}>
           <View style={[styles.frameInner, styles.frameChildPosition]} />
           <Image
@@ -113,7 +194,9 @@ const Zarowka = () => {
             resizeMode="cover"
             source={isPressed ? require("../assets/onoffon.png") : require("../assets/onoff.png")}
           />
-          <Text style={[styles.turnOff, styles.colorTypo]}>TURN OFF</Text>
+        <Text style={[styles.turnOff, styles.colorTypo]}>
+           {isPressed ? 'TURN ON' : 'TURN OFF'}
+         </Text>
         </Pressable>
       </View>
       <View style={styles.frameView}>
@@ -124,11 +207,7 @@ const Zarowka = () => {
           source={require("../assets/edit021.png")}
         />
       </View>
-      <Image
-        style={[styles.strzakabbIcon, styles.frameIconLayout]}
-        resizeMode="cover"
-        source={require("../assets/strzakabb1.png")}
-      />
+
     </View>
   );
 };
@@ -141,6 +220,7 @@ const styles = StyleSheet.create({
    // position: "absolute",
     overflow: "hidden",
   },
+
 
   rectanglePosition: {
     bottom: "12.77%",
@@ -369,14 +449,13 @@ sliderOff: {
   },
 //strzałka lewa
   strzakabbIcon: {
-      height: "7%",
-      width: "15%",
-      top: "-58.57%",
-      right: "79.49%",
-      bottom: "88.63%",
-      left: "9%",
-
+       height: "30%",
+         width: "45%",
+         right: "79.49%",
+         left: -87,
+         top: "0%",
     },
+
   zarowka: {
     backgroundColor: Color.colorWhite,
     flex: 1,
