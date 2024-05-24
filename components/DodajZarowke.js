@@ -1,18 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, StyleSheet, Pressable } from 'react-native';
-import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
-const DodajZarowke = () => {
+import { Image } from 'react-native'; // Jeśli używasz expo-image, upewnij się, że jest poprawnie zainstalowane i zaimportowane
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { BACKEND_API_URL } from '@env'; // Upewnij się, że ten plik istnieje i zawiera odpowiednią zmienną środowiskową
+
+// Zakładamy, że getDataFromStorage jest wcześniej zdefiniowaną funkcją
+// Jeśli nie, musisz ją zaimplementować lub usunąć odniesienie
+// import { getDataFromStorage } from 'gdzieś';
+
+const DodajZarowke = ({ device }) => {
   const [isEnabled, setIsEnabled] = useState(false);
-   const navigation = useNavigation();
-  // Funkcja zmieniająca stan przełącznika
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const [userId, setUserId] = useState(null); // Zakładamy, że userId jest potrzebne
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    // Przykład użycia funkcji do odczytu danych
+    // getDataFromStorage('@myKey').then((data) => {
+    //     setUserId(data.Key);
+    // });
+    // Zakomentowane, ponieważ funkcja getDataFromStorage nie jest zdefiniowana w tym przykładzie
+  }, []);
+
+  const toggleSwitch = async () => {
+    setIsEnabled(previousState => !previousState);
+    if (!isEnabled) {
+      await turnOnBulb(); // Włącz żarówkę, jeśli jest wyłączona
+    } else {
+      await turnOffBulb(); // Wyłącz żarówkę, jeśli jest włączona
+    }
+  };
+
+  const turnOnBulb = async () => {
+    const bulbId = '4'; // Upewnij się, że to jest prawidłowy identyfikator żarówki
+    try {
+      const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/on/`, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const turnOffBulb = async () => {
+    const bulbId = '4'; // Upewnij się, że to jest prawidłowy identyfikator żarówki
+    try {
+      const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/off/`, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
 
     <View style={[styles.tile, { backgroundColor: isEnabled ? '#FFF' : '#000' }]}>
       <View style={styles.header}>
-        <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>Żarówka</Text>
+        <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>{device.name}</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
@@ -20,7 +70,7 @@ const DodajZarowke = () => {
           value={isEnabled}
         />
      </View>
-            <Pressable style={styles.content} onPress={() => navigation.navigate('Zarowka')}>
+            <Pressable style={styles.content} onPress={() => navigation.navigate('Zarowka', {device: device})}>
               <Image
                 style={styles.arwkaIcon}
                 resizeMode="cover"
@@ -28,31 +78,27 @@ const DodajZarowke = () => {
               />
             </Pressable>
           </View>
-
       );
     };
 
 const styles = StyleSheet.create({
-  tile: {
-    width: 165, // Ustawienie szerokości kafelka
-    height: 165, // Ustawienie wysokości kafelka, aby był kwadratem
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    overflow: 'hidden',
-    margin: 10, // Dodano margines dla lepszego wyświetlania
-    justifyContent: 'center', // Centrowanie zawartości
-    alignItems: 'center', // Centrowanie zawartości
-    marginTop: 70,
-    marginLeft: 10,
-  },
+tile: {
+  width: 150, // Możesz potrzebować dostosować tę szerokość
+  height: 150,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  borderRadius: 5,
+  overflow: 'hidden',
+  margin: 10, // Możesz potrzebować dostosować ten margines
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+
   arwkaIcon: {
   height: 70,
   width: 70,
-   top: "6.93%",
-    right: "33.92%",
-     bottom: "33.6%",
-      left: "1%",
+  top:15,
+
       },
 
   content:
@@ -72,7 +118,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   content: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center', // Wyśrodkowanie zawartości
     alignItems: 'center', // Wyśrodkowanie zawartości
   },

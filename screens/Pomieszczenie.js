@@ -3,11 +3,15 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import {useState, useEffect} from'react';
 import { Image } from "expo-image";
 import {BACKEND_API_URL} from '@env';
-import { StyleSheet, Text, View, Pressable, ScrollView, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Color, Padding, FontFamily, Border, FontSize } from "../GlobalStyles";
 import Urzadzenia from "../components/Urzadzenia";
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+import DodajGniazdko from '../components/DodajGniazdko';
+import DodajZarowke from '../components/DodajZarowke';
+
+
 
 
 /*
@@ -22,41 +26,33 @@ const Pomieszczenie = ({deviceData}) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState(null);
 
-    const [devices, setDevices] = useState([]);
+    //const [devices, setDevices] = useState([]);
     const route = useRoute();
-    const { name, image, roomId } = route.params;
+    const { name, image, roomId, devices} = route.params;
     const navigation = useNavigation();
     const [userId, setUserId] = useState(null);
 
-    useEffect(() => {
-
-        getDataFromStorage('@myKey').then((data) => {
-            setUserId(data.Key);
-        });
-
-        if (userId)
-        {
-        fetch(`${BACKEND_API_URL}/api/account/${userId}/room/${roomId}/`)//### Ten użytkownik nr 1 jest na sztywno
-              .then(response => response.json())
-              .then(data => {
-                setDevices(data.devices); // Assuming the server response is the array of devices
-              })
-              .catch(error => {
-                console.error('Error fetching data: ', error);
-             });}
-    }, [userId]);
-
+//    useEffect(() => {
+//        getDataFromStorage('@myKey').then((data) => {
+//            setUserId(data.Key);
+//        });
+//
+//        if (userId)
+//        {
+//        fetch(`${BACKEND_API_URL}/api/account/${userId}/room/`)//### Ten użytkownik nr 1 jest na sztywno
+//              .then(response => response.json())
+//              .then(data => {
+//                setDevices(data.devices); // Assuming the server response is the array of devices
+//              })
+//              .catch(error => {
+//                console.error('Error fetching data: ', error);
+//             });}
+//    }, [userId]);
 
   return (
 
-
-
     <>
-     <View>
-              {devices.map(device => (
-                <Text key={device.id}>{device.name}</Text>
-              ))}
-            </View>
+
        <Urzadzenia
               isVisible={isModalVisible}
               onClose={() => setModalVisible(false)}
@@ -64,50 +60,76 @@ const Pomieszczenie = ({deviceData}) => {
             />
 
       <View style={styles.pomieszczenie}>
+
         <View style={styles.sypialniaWrapper}>
           <Text style={[styles.sypialnia, styles.dodaneFlexBox]}>{name}</Text>
         </View>
         <Image source={{ uri: image }} style={[styles.pomieszczenieChild, styles.childPosition]} />
-        <View style={[styles.dodaneWrapper, styles.wrapperFlexBox]}>
-          <Text style={[styles.dodane, styles.arwkaTypo]}>Dodane:</Text>
-         {/* Tutaj są wyswietlane urzadzenia w pokoju(Kafelki) */}
-         {devices?.map((device, index) => (
-           <Text key={index}>{device.name} - Klasa: {device.name}, Taryfa: {device.taryfa}, ID: {device.id}</Text>
-         ))}
-        </View>
-        <View style={[styles.dodajUrzdzeniaWrapper, styles.wrapperFlexBox]}>
-          <Text style={[styles.dodane, styles.arwkaTypo]}>Dodaj urządzenia:</Text>
-        </View>
-        <Pressable onPress={() => navigation.goBack()}>
-          <Image
-            style={[styles.strzakabbIcon, styles.iconLayout]}
-            resizeMode="cover"
-            source={require("../assets/strzakabb.png")}
-          />
-        </Pressable>
-        <View style={styles.pomieszczenieItem} />
-        <LinearGradient
-          style={styles.wrapper}
-          locations={[0, 1]}
-          colors={["#dcdcdc", "#fff"]}
-        >
-          <Pressable style={[styles.pressable, styles.pressableLayout]} />
-        </LinearGradient>
 
-        <ScrollView
-          style={styles.pomieszczenieInner}
-          horizontal={true}
-          showsVerticalScrollIndicator={true}
-          showsHorizontalScrollIndicator={true}
-          contentContainerStyle={styles.frameScrollViewContent}
-        >
-          <Image
-            style={styles.frameChild}
-            resizeMode="cover"
-            source={require("../assets/group-16.png")}
+   <View style={[styles.dodajUrzdzeniaWrapper1, styles.wrapperFlexBox]}>
+                           <Text style={[styles.dodane, styles.arwkaTypo]}>Dodaj urządzenia:</Text>
+                         </View>
+
+<View style={[styles.dodaneWrapper, styles.wrapperFlexBox]}>
+
+          <Text style={[styles.dodane, styles.arwkaTypo1]}>Dodane:</Text>
+
+         {/* Tutaj są wyswietlane urzadzenia w pokoju(Kafelki) */}
+
+ <FlatList
+            data={devices}
+            numColumns={2}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+              let ComponentToRender = null;
+              if (item.device_type === 'SmartPlug') {
+                ComponentToRender = DodajGniazdko;
+              } else if (item.device_type === 'SmartBulb') {
+                ComponentToRender = DodajZarowke;
+              }
+
+              return ComponentToRender && <ComponentToRender device={item} />;
+            }}
+            contentContainerStyle={styles.listCon}
           />
-        </ScrollView>
-        <Pressable onPress={() => { setSelectedDevice('Żarowkę'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
+        </View>
+
+
+            <View style={styles.pomieszczenieItem} />
+
+            <Pressable onPress={() => navigation.goBack()}>
+              <Image
+                style={[styles.strzakabbIcon, styles.iconLayout]}
+                resizeMode="cover"
+                source={require("../assets/strzakabb.png")}
+              />
+            </Pressable>
+
+            <LinearGradient
+              style={styles.wrapper}
+              locations={[0, 1]}
+              colors={["#dcdcdc", "#fff"]}
+            >
+              <Pressable style={[styles.pressable, styles.pressableLayout]} />
+            </LinearGradient>
+
+            <View
+              style={styles.pomieszczenieInner}
+              horizontal={true}
+              showsVerticalScrollIndicator={true}
+              showsHorizontalScrollIndicator={true}
+              contentContainerStyle={styles.frameScrollViewContent}
+            >
+              <Image
+                style={styles.frameChild}
+                resizeMode="cover"
+                source={require("../assets/group-16.png")}
+              />
+
+
+            </View>
+
+        <Pressable onPress={() => { setSelectedDevice('DodajZarowke'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
           <View style={styles.rectangleParent}>
             <LinearGradient
               style={[styles.groupChild, styles.pressableLayout]}
@@ -123,7 +145,7 @@ const Pomieszczenie = ({deviceData}) => {
                      </View>
                    </Pressable>
 
-                   <Pressable onPress={() => { setSelectedDevice('Gniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
+                   <Pressable onPress={() => { setSelectedDevice('DodajGniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
                      <View style={styles.rectangleParent}>
                        <LinearGradient
                          style={[styles.groupChild, styles.pressableLayout]}
@@ -139,6 +161,7 @@ const Pomieszczenie = ({deviceData}) => {
                      </View>
                    </Pressable>
                  </View>
+
                </> // Zamknięcie fragmentu JSX
              );
            };
@@ -149,6 +172,15 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "flex-start",
   },
+
+listCon: {
+   paddingHorizontal: 10,
+},
+  childPosition: {
+    width: '100%',
+    height: 200, // Ustaw wysokość według potrzeb
+  },
+
   iconLayout: {
     maxHeight: "100%",
     maxWidth: "100%",
@@ -157,26 +189,27 @@ const styles = StyleSheet.create({
   dodaneFlexBox: {
     textAlign: "left",
     color: Color.colorGray_100,
-  }, //pozycja obrazu
-  childPosition: {
-    left: "0%",
-    right: "0%",
-    position: "absolute",
-  }, //oba napisy pozycja
+  },
+  //pozycja obrazu
+///////////////////////////////////////////////////////////////
+  //oba napisy pozycja
   wrapperFlexBox: {
-    paddingVertical: 0,
-    paddingHorizontal: Padding.p_6xs,
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    top: "50%",
-    position: "absolute",
+   padding: Padding.p_6xs,
+      justifyContent: 'center',
+      alignItems: 'center',
   }, //style obu napisów
-  arwkaTypo: {
+
+  arwkaTypo1: {
     fontWeight: "600",
     fontFamily: FontFamily.latoBold,
     letterSpacing: 0,
-  }, //zaokraglenia kwadracików
+    left:-113,
+  },
+    arwkaTypo: {
+      fontWeight: "600",
+      fontFamily: FontFamily.latoBold,
+      letterSpacing: 0,
+    }, //zaokraglenia kwadracików
   pressableLayout: {
     backgroundColor: Color.kolorStrzaki,
     borderRadius: Border.br_3xs,
@@ -203,9 +236,13 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.latoBold,
     letterSpacing: 0,
     color: Color.colorGray_100,
-    left: "40%",
+    left: "5%",
     marginTop: "17%",
   },
+  sypialniaWrapper: {
+      alignItems: 'center',
+      marginTop: 20,
+    },
 
   //wielkosc zdjecia
   pomieszczenieChild: {
@@ -213,35 +250,46 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
     overflow: "hidden",
     bottom: "60.99%",
-    top: "16.67%",
+    top: 20,
     height: "27.34%",
     right: "0%",
     width: "100%",
   },//napis dodane
   dodane: {
     fontSize: FontSize.size_lg,
-    textAlign: "left",
     color: Color.colorGray_100,
+     marginVertical: 10, // Dodaj margines wokół tekstu
 
-  },//ustawienie napisu dodane
+  },
+
+    //ustawienie napisu dodane
   dodaneWrapper: {
-    marginTop: 127,
-    width: "23%",
-    right: "75.35%",
-    left: "6.05%",
-  },//ustawienie napisu dodaj urzadzenia
+    //alignItems: 'flex-start',
+       width: '100%', // Ustaw szerokość na 100%, aby tekst był wyrównany do lewej
+       paddingHorizontal: 10, // Dodaj padding, aby tekst nie dotykał krawędzi ekranu
+       left:-15,
+       top: 200,
+},
+//ustawienie napisu dodaj urzadzenia
   dodajUrzdzeniaWrapper: {
-    marginTop: -30,
+    marginTop: -52,
     width: "45.12%",
     right: "59.77%",
     left: "5.12%",
-  },//wymiary stzrałki lewej
+  },
+    dodajUrzdzeniaWrapper1: {
+      marginTop: -48,
+      width: "45.12%",
+      right: "59.77%",
+      left: "2.12%",
+      top: 60,
+    },
+  //wymiary stzrałki lewej
   strzakabbIcon: {
     height: "25.4%",
     width: "14%",
-    top: "-20%",
+    top:-590,
     right: "80%",
-    bottom: "90.01%",
     left: "6.98%",
    // position: "absolute",
   },
@@ -249,7 +297,6 @@ const styles = StyleSheet.create({
   pomieszczenieItem: {
     height: "15.23%",
     width: "106.51%",
-    top: "12%",
     right: "1.86%",
     bottom: "46.6%",
     left: "1.63%",
@@ -261,9 +308,8 @@ const styles = StyleSheet.create({
   }, //pusty kafelek z urzadzeniami
   wrapper: {
     left: "63%",
-    top: "-1.8%",
+    top: -465,
     right: "7.21%",
-    bottom: "47.96%",
     width: 101,
     height:94,
     borderRadius: Border.br_3xs,
@@ -301,12 +347,12 @@ const styles = StyleSheet.create({
   arwka: {
     top: 67,
     left: 0,
-    fontSize: FontSize.size_mini,
+    fontSize: 16,
     color: Color.colorBlack,
     textAlign: "center",
     height: 27,
     width: 101,
-    position: "absolute",
+    //position: "absolute",
   },
   //wielkosc tła na żarowce i gniazdku
   rectangleParent: {
@@ -315,7 +361,7 @@ const styles = StyleSheet.create({
   }, //ustawnienie okienka z żarówką wraz z żarówką
   framePressable: {
     left: 120,
-    marginTop: -160,
+    marginTop: -162,
   },
   //gniazdkoi ikona
   gniazdkoIcon: {
@@ -328,15 +374,14 @@ const styles = StyleSheet.create({
   }, //ustawienia całego okienka gniazdka
   pomieszczenieInner1: {
     left: 12,
-     marginTop: -160,
+     marginTop: -162,
   },
   pomieszczenie: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-    overflow: "hidden",
+
 
   },
 });
 
 export default Pomieszczenie;
-

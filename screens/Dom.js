@@ -39,50 +39,109 @@ export default function Dom() {
              },
            });
         if (!response.ok) {
-          throw new Error('Network response was not ok: ' + response);
+          throw new Error('Network response on DOM(fetchROoms) was not ok: ' + response);
         }
 
         const roomsData = await response.json();
         setRooms(roomsData);
       } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
+        console.error('There was a problem on DOM(fetchRooms) with the fetch operation:', error);
       }
     };
     if (userId) {
       fetchRooms();
     }
-  }, [userId]);
+  }, [userId, modalVisible]);//TODO Test modalVisible
 
   const handleAddRoom = (room) => {
-    setRooms(prevRooms => [...prevRooms, room]);
+    addRoomToServer(room);
+    //setRooms(prevRooms => [...prevRooms, room]);
     setModalVisible(false);
   };
 
   const handleEditRoom = (updatedRoom) => {
-    const updatedRooms = rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room);
-    setRooms(updatedRooms);
+    //const updatedRooms = rooms.map(room => room.id === updatedRoom.id ? updatedRoom : room);
+    editRoomToServer(updatedRoom);
+    //setRooms(updatedRooms);
     setEditRoom(null);
     setModalVisible(false);
   };
 
   const deleteRoomFromServer = async(roomId) => {
-    const url = `${BACKEND_API_URL}/delete-room/1/${roomId}`;//http://localhost:5000/delete-room/1/${roomId} ######ta jedynka to jest na sztywno oznacza użytkownika
+    const url = `${BACKEND_API_URL}/api/account/${userId}/room/${roomId}/`
     try {
            const response = await fetch(url, {
              method: 'DELETE', // Using the DELETE method as specified
            });
 
            if (!response.ok) {
-             throw new Error('Network response was not ok');
+             throw new Error('Network response on DOM(DEleteRoomFromServer) was not ok');
            }
            setRooms(currentRooms => currentRooms.filter(room => room.id !== roomId));
            } catch (error) {
-                 console.error('There was a problem with the fetch operation:', error);
+                 console.error('There was a problem on DOM(DeleteRoomFromServer) with the fetch operation:', error);
            }
   };
 
+ const addRoomToServer = async(room) => {
+    const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;
+    let data = {
+        name: room.name,
+        photo: room.image
+    };
+    console.log(room.name);
+    console.log(room.image);
+    try{
+        const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+
+            body: JSON.stringify(data),
+        });
+
+        if(!response.ok){
+            throw new Error('Something went wrong on Dom(addRoomToServer): network error');
+        }
+
+        const responseData = await response.json();
+        console.log(responseData);
+    } catch(error){
+            console.error('There was a problem on Dom(addRoomToServer) with the fetch operation:', error);
+          }
+  };
+
+   const editRoomToServer = async(room) => {
+      const url = `${BACKEND_API_URL}/api/account/${userId}/room/${room.id}/`;
+      let data = {
+          name: room.name,
+          photo: room.image
+      };
+        console.log(room.name);
+        console.log(room.image);
+      try{
+          const response = await fetch(url, {
+          method: 'PATCH',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+
+              body: JSON.stringify(data),
+          });
+
+          if(!response.ok){
+              throw new Error('Something went wrong on Dom(editRoomToServer): network error');
+          }
+
+          const responseData = await response.json();
+          console.log(responseData);
+      } catch(error){
+              console.error('There was a problem on Dom(editRoomToServer) with the fetch operation:', error);
+            }
+    };
+
   const handleDeleteRoom = (roomId) => {
-    //setRooms(rooms.filter(room => room.id !== roomId)); //To jest stara wersja, która działa tylko dla danych statycznych(omijając bazę danych)
     deleteRoomFromServer(roomId);
   };
 
@@ -183,5 +242,3 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
-
-

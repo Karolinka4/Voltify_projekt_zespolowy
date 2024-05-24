@@ -15,10 +15,11 @@ const Pokoj = ({ rooms, onDelete, onEdit }) => {
         <View style={styles.itemContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Pomieszczenie', {
             name: item.name,
-            image: item.url,
-            roomId: item.id
+            image: item.photo,
+            roomId: item.id,
+            devices: item.devices
           })}>
-            <Image source={{ uri: item.url }} style={styles.fullWidthImage} />
+            <Image source={{ uri: item.photo }} style={styles.fullWidthImage} />
           </TouchableOpacity>
 
           {/* Umieszczamy BlurView tylko pod tekstem i przyciskami */}
@@ -117,4 +118,3 @@ const styles = StyleSheet.create({
 });
 
 export default Pokoj;
-

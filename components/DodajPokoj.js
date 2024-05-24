@@ -25,7 +25,7 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
 
     if (editRoom) {
       setName(editRoom.name);
-      setImage(editRoom.image);
+      setImage(editRoom.photo);//TODO przy dodwaniu jak nie będzie zdjęcia to zamienić na image
       setShowImage(true);
     } else {
       setName('');
@@ -51,41 +51,14 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
     }
   };
 
-   const addRoomToServer = async(name) => {  //192.168.1.12
-   const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;//http://localhost:5000/add-room
-   let data = {
-    name: name,
-    //url: image            //Jeszcze tego nie ma
-   };
-    try{
-        const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-
-            body: JSON.stringify(data),
-        });
-
-        if(!response.ok){
-            throw new Error('Something went wrong: network error');
-        }
-
-        const responseData = await response.json();
-        console.log(responseData);
-    } catch(error){
-            console.error('There was a problem with the fetch operation:', error);
-          }
-    };
-
-
   const handleSubmit = () => {
     if (!name) {
       Alert.alert('Błąd', 'Nazwa pokoju jest wymagana.');
       return;
     }
-    addRoomToServer(name);
-    onSubmit({ id: editRoom ? editRoom.id : Math.random(), name, image });
+    //addRoomToServer(name);
+    //TODO MOżę dodać to głupie losowanie ID, jak się wywali
+    onSubmit({ id: editRoom ? editRoom.id : null, name, image });
     setName('');
     setImage(null);
   };
@@ -102,7 +75,7 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
        <TouchableOpacity style={[styles.button, styles.pickImageButton]} onPress={pickImage}>
            <Text style={styles.buttonText}>Wybierz zdjęcie</Text>
          </TouchableOpacity>
-         {image && <Image source={{ uri: image }} style={styles.previewImage} />}
+         {(image || showImage) && <Image source={{ uri: image }} style={styles.previewImage} />}
          <View style={styles.buttonContainer}>
            <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSubmit}>
              <Text style={styles.buttonText}>Zapisz</Text>

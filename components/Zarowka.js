@@ -3,7 +3,7 @@ import {useState, useEffect} from'react';
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import Slider from '@react-native-community/slider';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
@@ -21,6 +21,9 @@ const Zarowka = () => {
   const [isPressed, setIsPressed] = useState(false);
   const [userId, setUserId] = useState(null);
   const [brightnessOff, setBrightnessOff] = useState(0); //Jest potrzebne, żeby Ci nie skakało, rozwiązanie zrobione na kolanie
+  const route = useRoute();
+  const { device } = route.params;
+
 
  useEffect(() => {
     // Przykład użycia funkcji do odczytu danych
@@ -95,7 +98,7 @@ const turnOffBulb = async () => {
     <View style={styles.zarowka}>
       <View style={styles.zarowkaChild} />
       <View style={styles.arwka1Wrapper}>
-        <Text style={styles.arwka1}>Zarowka1</Text>
+        <Text style={styles.arwka1}>{device.name}</Text>
          <Pressable onPress={() => navigation.goBack()}>
             <Image
               style={[styles.strzakabbIcon, styles.frameIconLayout]}

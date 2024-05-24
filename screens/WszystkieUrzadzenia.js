@@ -1,13 +1,37 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, Pressable, Text, Image } from 'react-native';
+import {useState, useEffect} from'react';
+import { View, StyleSheet, Pressable, Text, Image, FlatList } from 'react-native';
 // Note: Make sure the import path for Image is correct. If you're using expo-image, adjust accordingly.
 // import { Image } from "expo-image";
 import DodajZarowke from '../components/DodajZarowke';
 import DodajGniazdko from '../components/DodajGniazdko';
+import {BACKEND_API_URL} from '@env';
 
-const WszystkieUrzadzenia = () => {
+
+const WszystkieUrzadzenia = ({accountId}) => {
   const navigation = useNavigation();
+  const [devices, setDevices] = useState([]);
+  const [userId, setUserId] = useState(null);
+
+     useEffect(() => {
+       const fetchDevices = async () => {
+         if (userId) { // Zakładając, że userId jest używane jako accountId
+           try {
+             const response = await fetch(`${BACKEND_API_URL}/account/${userId}/device/`);
+             if (!response.ok) {
+               throw new Error('Problem z pobraniem danych');
+             }
+             const data = await response.json();
+             setDevices(data);
+           } catch (error) {
+             console.error("Błąd przy pobieraniu urządzeń:", error);
+           }
+         }
+       };
+
+       fetchDevices();
+     }, [userId]); // Wykonujemy useEffect, gdy userId się zmieni
 
   return (
     <View style={styles.pomieszczenie}>
@@ -22,10 +46,13 @@ const WszystkieUrzadzenia = () => {
         <Text style={styles.headerText}>Urządzenia</Text>
       </View>
 
-      <View style={styles.ustawienie}>
-        <DodajZarowke />
-        <DodajGniazdko />
-      </View>
+      <FlatList
+             data={devices}
+             keyExtractor={(item) => item.id.toString()}
+             renderItem={({ item }) => (
+               <Text>{item.name} - {item.device_type}</Text>
+             )}
+           />
     </View>
   );
 };

@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View, Text } from "react-native";
 import { Image } from "expo-image";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 import {BACKEND_API_URL} from '@env';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 
 /*
@@ -19,6 +19,8 @@ const Gniazdko = () => {
  // Stan do śledzenia, czy przycisk jest wciśnięty
   const [isPressed, setIsPressed] = useState(false);
   const [userId, setUserId] = useState(null);
+  const route = useRoute();
+  const { device } = route.params;
 
   useEffect(() => {
     // Przykład użycia funkcji do odczytu danych
@@ -119,7 +121,7 @@ const turnOffPlug = async () => {
           />
         </Pressable>
       </View>
-      <Text style={[styles.gniazdko1, styles.actionTypo]}>Gniazdko</Text>
+      <Text style={[styles.gniazdko1, styles.actionTypo]}>{device.name}</Text>
     </View>
   );
 };

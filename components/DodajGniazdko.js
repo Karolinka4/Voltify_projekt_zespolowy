@@ -1,62 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Switch, StyleSheet, Pressable } from 'react-native';
-import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
-const DodajGniazdko = () => {
+import { Image } from 'react-native'; // Zmieniłem import na 'react-native', jeśli używasz 'expo-image', dostosuj import odpowiednio
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { BACKEND_API_URL } from '@env';
+
+const DodajGniazdko = ({ device }) => {
   const [isEnabled, setIsEnabled] = useState(false);
-    const navigation = useNavigation();
-  // Funkcja zmieniająca stan przełącznika
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const navigation = useNavigation();
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    getDataFromStorage('@myKey').then((data) => {
+      setUserId(data.Key);
+    });
+  }, []);
+
+  const toggleSwitch = async () => {
+    const newState = !isEnabled;
+    setIsEnabled(newState); // Zaktualizuj stan lokalny
+
+    // Określ, który endpoint powinien zostać wywołany w zależności od nowego stanu
+    const endpoint = newState ? 'on' : 'off';
+
+    try {
+      const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/${endpoint}/`, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      // Tutaj możesz dodać logikę obsługującą pomyślne przełączenie stanu
+    } catch (error) {
+      console.error('Error:', error);
+      setIsEnabled(!newState); // Przywróć poprzedni stan w przypadku błędu
+    }
+  };
 
   return (
     <View style={[styles.tile, { backgroundColor: isEnabled ? '#FF8080' : '#FFC0CB' }]}>
       <View style={styles.header}>
-        <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>Gniazdko</Text>
+        <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>{device.name}</Text>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
           onValueChange={toggleSwitch}
           value={isEnabled}
         />
       </View>
-       <Pressable style={styles.content} onPress={() => navigation.navigate('Gniazdko')}>
-                    <Image
-                      style={styles.arwkaIcon}
-                      resizeMode="cover"
-                      source={require("../assets/gniazdko.png")}
-                    />
-                  </Pressable>
-
+      <Pressable style={styles.content} onPress={() => navigation.navigate('Gniazdko', { device: device })}>
+        <Image
+          style={styles.arwkaIcon}
+          resizeMode="cover"
+          source={require("../assets/gniazdko.png")}
+        />
+      </Pressable>
     </View>
   );
 };
 
+
 const styles = StyleSheet.create({
   tile: {
-    width: 165, // Ustawienie szerokości kafelka
-    height: 165, // Ustawienie wysokości kafelka, aby był kwadratem
+    width: 150, // Możesz potrzebować dostosować tę szerokość
+    height: 150,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
     overflow: 'hidden',
-    margin: 10, // Dodano margines dla lepszego wyświetlania
-    justifyContent: 'center', // Centrowanie zawartości
-    alignItems: 'center', // Centrowanie zawartości
-    marginTop: 70,
+    margin: 10, // Możesz potrzebować dostosować ten margines
+    justifyContent: 'center',
+    alignItems: 'center',
+
   },
+
   arwkaIcon: {
   height: 70,
   width: 70,
-   top: "6.93%",
-    right: "33.92%",
-     bottom: "33.6%",
-      left: "1%",
+  top:15,
       },
 
   content:
-  { // flex: 1,
+  {
   justifyContent: 'center',
   alignItems: 'center',
+
+
   },
 
   header: {
@@ -68,9 +97,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
+
   },
   content: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center', // Wyśrodkowanie zawartości
     alignItems: 'center', // Wyśrodkowanie zawartości
   },
