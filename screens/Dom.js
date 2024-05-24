@@ -29,6 +29,7 @@ export default function Dom() {
 
 //@@@@@@@@@@@@@@@@@@@@@@@ może [userId, rooms] trzeba dopisać rooms
    useEffect(() => {
+      console.log("Pobieram dane na głównej stronie(pokoje, urżądzenia itp)");
        const fetchRooms = async () => {
          const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;// ########### tutaj też jest na stałe przypisana 1
          try {
@@ -118,8 +119,6 @@ export default function Dom() {
           name: room.name,
           photo: room.image
       };
-        console.log(room.name);
-        console.log(room.image);
       try{
           const response = await fetch(url, {
           method: 'PATCH',

@@ -1,28 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Color, FontFamily, Border, FontSize } from '../GlobalStyles';
 import {BACKEND_API_URL} from '@env';
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 /*
 ##########################################################################
 Wygląd edycji,dodawania i usuwania urządzenia (to nie jest wygląd dodania urządzenia)
 ###########################################################################
-
 */
-
-const Urzadzenia = ({ isVisible, onClose, selectedDevice, onSave, onDelete }) => {
+{/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun  */}
+const Urzadzenia = ({ isVisible, onClose, selectedDevice, onEdit, onSave, onDelete, roomId }) => {
   const [nazwa, setNazwa] = useState('');
-  const [id, setId] = useState('');
   const [ip, setIp] = useState('');
-  const [room, setRoom] = useState('');
-  const [type, setType] = useState('');
+  const [userId, setUserId] = useState(null);
+  const [cost, setCost] = useState('');
+
+ useEffect(() => {
+    // Przykład użycia funkcji odczytu danych
+    getDataFromStorage('@myKey').then((data) => {
+        setUserId(data.Key);
+    });
+  }, []);
 
 
 const handleSave = () => {
-  const data = { ip, name: nazwa, room, type };
-  addDevice(data).then(() => {
-    onClose();
-  });
+  const data = { name: nazwa, ip, room: roomId, energy_cost: cost};
+  if(selectedDevice === "Zarowke")
+  {
+    addSmartBulb(data).then(() => {
+       onCloseModal();
+     });
+  }
+  else
+  {
+    addSmartPlug(data).then(() => {
+        onCloseModal();
+    });
+  }
+
 };
+
+const onCloseModal = () => {
+  setCost('');
+  setIp('');
+  setNazwa('');
+  onClose();
+}
 
   const handleDelete = () => {
     fetch(`${BACKEND_API_URL}/delete-device/${id}`, {
@@ -36,7 +59,7 @@ const handleSave = () => {
     })
     .then(data => {
       console.log('Device deleted successfully:', data);
-      onClose();
+      onCloseModal();
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -44,32 +67,28 @@ const handleSave = () => {
   };
 
 
+  const addSmartBulb = async (deviceData) => {
+    const url = `${BACKEND_API_URL}/api/account/${userId}/smartbulb/`;
+    try{
+    const response = await fetch(url, {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify(deviceData),
+               });
+            if (!response.ok) {
+              throw new Error('Network response on Urządzenia(addSmartBulb) was not ok: ' + response);
+            }
+            const responseData = await response.json();
+            console.log('Success:', responseData);
+                  onCloseModal();
+    }catch(error)
+    {
+    console.error('There was a problem on Urządzenia(addSmartBulb) with the fetch operation:', error);
 
-
-  const addDevice = (deviceData) => {
-    fetch(`${BACKEND_API_URL}/add-device`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(deviceData),
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok: ' + response);
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Success:', data);
-      onClose();
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-  };
-
-
+    }
+};
   return (
     <Modal
       animationType="slide"
@@ -88,12 +107,18 @@ const handleSave = () => {
           />
           <TextInput
             style={styles.input}
-            onChangeText={setId}
-            value={id}
-            placeholder="ID"
+            onChangeText={setIp}
+            value={ip}
+            placeholder="IP"
             keyboardType="numeric"
           />
-
+      <TextInput
+              style={styles.input}
+              onChangeText={setCost}
+              value={cost}
+              placeholder="Taryfa"
+              keyboardType="numeric"
+            />
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={[styles.button, styles.buttonSave]}
@@ -101,15 +126,17 @@ const handleSave = () => {
             >
               <Text style={styles.textStyle}>Zapisz</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonDelete]}
-              onPress={handleDelete}
-            >
-              <Text style={styles.textStyle}>Usuń</Text>
-            </TouchableOpacity>
+            {onEdit && (<TouchableOpacity
+                            style={[styles.button, styles.buttonDelete]}
+                            onPress={handleDelete}
+                        >
+                        <Text style={styles.textStyle}>Usuń</Text>
+                        </TouchableOpacity>
+            )}
+
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              onPress={onClose}
+              onPress={onCloseModal}
             >
               <Text style={styles.textStyle}>Anuluj</Text>
             </TouchableOpacity>

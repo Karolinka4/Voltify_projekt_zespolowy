@@ -7,31 +7,32 @@ import { View, StyleSheet, Pressable, Text, Image, FlatList } from 'react-native
 import DodajZarowke from '../components/DodajZarowke';
 import DodajGniazdko from '../components/DodajGniazdko';
 import {BACKEND_API_URL} from '@env';
-
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 
 const WszystkieUrzadzenia = ({accountId}) => {
   const navigation = useNavigation();
   const [devices, setDevices] = useState([]);
   const [userId, setUserId] = useState(null);
 
-     useEffect(() => {
-       const fetchDevices = async () => {
-         if (userId) { // Zakładając, że userId jest używane jako accountId
-           try {
-             const response = await fetch(`${BACKEND_API_URL}/account/${userId}/device/`);
-             if (!response.ok) {
-               throw new Error('Problem z pobraniem danych');
-             }
-             const data = await response.json();
-             setDevices(data);
-           } catch (error) {
-             console.error("Błąd przy pobieraniu urządzeń:", error);
-           }
-         }
-       };
 
-       fetchDevices();
-     }, [userId]); // Wykonujemy useEffect, gdy userId się zmieni
+
+    useEffect(() => {
+        getDataFromStorage('@myKey').then((data) => {
+            setUserId(data.Key);
+        });
+
+        if (userId)
+        {
+        fetch(`${BACKEND_API_URL}/api/account/${userId}/device/`)//### Ten użytkownik nr 1 jest na sztywno
+              .then(response => response.json())
+              .then(data => {
+                setDevices(data); // Assuming the server response is the array of devices
+              })
+              .catch(error => {
+                console.error('Error fetching data on WszystkieUrzadzenia: ', error);
+             });}
+    }, [userId]);
+
 
   return (
     <View style={styles.pomieszczenie}>
@@ -45,19 +46,36 @@ const WszystkieUrzadzenia = ({accountId}) => {
         </Pressable>
         <Text style={styles.headerText}>Urządzenia</Text>
       </View>
+      <FlatList  style={[styles.lista]}
+                  data={devices}
+                  numColumns={2}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item }) => {
+                    let ComponentToRender = null;
+                    if (item.device_type === 'SmartPlug') {
+                      ComponentToRender = DodajGniazdko;
+                    } else if (item.device_type === 'SmartBulb') {
+                      ComponentToRender = DodajZarowke;
+                    }
 
-      <FlatList
-             data={devices}
-             keyExtractor={(item) => item.id.toString()}
-             renderItem={({ item }) => (
-               <Text>{item.name} - {item.device_type}</Text>
-             )}
-           />
+               return ComponentToRender ? <ComponentToRender device={item} /> : null;
+                   }}
+                   contentContainerStyle={styles.listCon}
+                 />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+
+  listCon: {
+     paddingHorizontal: 10,
+
+  },
+  lista:{
+    marginTop:35,
+  },
+
   ustawienie: {
     flexDirection: "row", // Ustawienie elementów w poziomie
     justifyContent: 'space-around', // Rozłożenie elementów równomiernie z zachowaniem odstępu na końcach

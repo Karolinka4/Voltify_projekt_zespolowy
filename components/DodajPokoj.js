@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Button, TextInput, StyleSheet, Image, Alert, TouchableOpacity, Text } from 'react-native';
+import { Modal, View, Button, TextInput, StyleSheet, Image, Alert, TouchableOpacity, Text} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {BACKEND_API_URL} from '@env';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
@@ -64,6 +64,7 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
   };
 
   return (
+
     <Modal visible={visible} animationType="slide">
       <View style={styles.modalContent}>
         <TextInput
@@ -86,6 +87,7 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
          </View>
        </View>
     </Modal>
+
   );
 };
 

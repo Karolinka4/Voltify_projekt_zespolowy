@@ -3,7 +3,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import {useState, useEffect} from'react';
 import { Image } from "expo-image";
 import {BACKEND_API_URL} from '@env';
-import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity,ScrollView  } from "react-native";
+import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity,ScrollView, KeyboardAvoidingView  } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Color, Padding, FontFamily, Border, FontSize } from "../GlobalStyles";
 import Urzadzenia from "../components/Urzadzenia";
@@ -32,33 +32,19 @@ const Pomieszczenie = ({deviceData}) => {
     const navigation = useNavigation();
     const [userId, setUserId] = useState(null);
 
-//    useEffect(() => {
-//        getDataFromStorage('@myKey').then((data) => {
-//            setUserId(data.Key);
-//        });
-//
-//        if (userId)
-//        {
-//        fetch(`${BACKEND_API_URL}/api/account/${userId}/room/`)//### Ten użytkownik nr 1 jest na sztywno
-//              .then(response => response.json())
-//              .then(data => {
-//                setDevices(data.devices); // Assuming the server response is the array of devices
-//              })
-//              .catch(error => {
-//                console.error('Error fetching data: ', error);
-//             });}
-//    }, [userId]);
-
   return (
 
     <>
-
+<KeyboardAvoidingView>
+       {/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun(przy false go nie ma, przy true ma być) */}
        <Urzadzenia
               isVisible={isModalVisible}
               onClose={() => setModalVisible(false)}
               selectedDevice={selectedDevice}
-            />
-
+              onEdit={false}
+              roomId={roomId}
+       />
+</KeyboardAvoidingView>
       <View style={styles.pomieszczenie}>
 
         <View style={styles.sypialniaWrapper}>
@@ -110,7 +96,7 @@ const Pomieszczenie = ({deviceData}) => {
 
             </View>
 
-        <TouchableOpacity onPress={() => { setSelectedDevice('DodajZarowke'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
+        <TouchableOpacity onPress={() => { setSelectedDevice('Zarowke'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
           <View style={styles.rectangleParent}>
             <LinearGradient
               style={[styles.groupChild, styles.pressableLayout]}
@@ -126,7 +112,7 @@ const Pomieszczenie = ({deviceData}) => {
                      </View>
                    </TouchableOpacity>
 
-                   <TouchableOpacity onPress={() => { setSelectedDevice('DodajGniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
+                   <TouchableOpacity onPress={() => { setSelectedDevice('Gniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
                      <View style={styles.rectangleParent}>
                        <LinearGradient
                          style={[styles.groupChild, styles.pressableLayout]}
