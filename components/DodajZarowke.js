@@ -3,7 +3,7 @@ import { View, Text, Switch, StyleSheet, Pressable } from 'react-native';
 import { Image } from 'react-native'; // Jeśli używasz expo-image, upewnij się, że jest poprawnie zainstalowane i zaimportowane
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { BACKEND_API_URL } from '@env'; // Upewnij się, że ten plik istnieje i zawiera odpowiednią zmienną środowiskową
-
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 // Zakładamy, że getDataFromStorage jest wcześniej zdefiniowaną funkcją
 // Jeśli nie, musisz ją zaimplementować lub usunąć odniesienie
 // import { getDataFromStorage } from 'gdzieś';

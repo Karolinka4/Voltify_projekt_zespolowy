@@ -3,7 +3,7 @@ import { View, Text, Switch, StyleSheet, Pressable } from 'react-native';
 import { Image } from 'react-native'; // Zmieniłem import na 'react-native', jeśli używasz 'expo-image', dostosuj import odpowiednio
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { BACKEND_API_URL } from '@env';
-
+import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 const DodajGniazdko = ({ device }) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const navigation = useNavigation();

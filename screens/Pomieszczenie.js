@@ -3,7 +3,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import {useState, useEffect} from'react';
 import { Image } from "expo-image";
 import {BACKEND_API_URL} from '@env';
-import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity,ScrollView  } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Color, Padding, FontFamily, Border, FontSize } from "../GlobalStyles";
 import Urzadzenia from "../components/Urzadzenia";
@@ -69,48 +69,29 @@ const Pomieszczenie = ({deviceData}) => {
    <View style={[styles.dodajUrzdzeniaWrapper1, styles.wrapperFlexBox]}>
                            <Text style={[styles.dodane, styles.arwkaTypo]}>Dodaj urządzenia:</Text>
                          </View>
-
 <View style={[styles.dodaneWrapper, styles.wrapperFlexBox]}>
+<Text style={[styles.dodane, styles.arwkaTypo1]}>Dodane:</Text>
+</View>
 
-          <Text style={[styles.dodane, styles.arwkaTypo1]}>Dodane:</Text>
-
-         {/* Tutaj są wyswietlane urzadzenia w pokoju(Kafelki) */}
-
- <FlatList
-            data={devices}
-            numColumns={2}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => {
-              let ComponentToRender = null;
-              if (item.device_type === 'SmartPlug') {
-                ComponentToRender = DodajGniazdko;
-              } else if (item.device_type === 'SmartBulb') {
-                ComponentToRender = DodajZarowke;
-              }
-
-              return ComponentToRender && <ComponentToRender device={item} />;
-            }}
-            contentContainerStyle={styles.listCon}
-          />
-        </View>
-
-
-            <View style={styles.pomieszczenieItem} />
-
-            <Pressable onPress={() => navigation.goBack()}>
+  <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
                 style={[styles.strzakabbIcon, styles.iconLayout]}
                 resizeMode="cover"
                 source={require("../assets/strzakabb.png")}
               />
-            </Pressable>
+            </TouchableOpacity>
+         {/* Tutaj są wyswietlane urzadzenia w pokoju(Kafelki) */}
+
+            <View style={styles.pomieszczenieItem} />
+
+
 
             <LinearGradient
               style={styles.wrapper}
               locations={[0, 1]}
               colors={["#dcdcdc", "#fff"]}
             >
-              <Pressable style={[styles.pressable, styles.pressableLayout]} />
+              <TouchableOpacity style={[styles.pressable, styles.pressableLayout]} />
             </LinearGradient>
 
             <View
@@ -129,7 +110,7 @@ const Pomieszczenie = ({deviceData}) => {
 
             </View>
 
-        <Pressable onPress={() => { setSelectedDevice('DodajZarowke'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
+        <TouchableOpacity onPress={() => { setSelectedDevice('DodajZarowke'); setModalVisible(true); }} style={[styles.framePressable, styles.framePressablePosition]}>
           <View style={styles.rectangleParent}>
             <LinearGradient
               style={[styles.groupChild, styles.pressableLayout]}
@@ -143,9 +124,9 @@ const Pomieszczenie = ({deviceData}) => {
                        />
                        <Text style={[styles.arwka, styles.arwkaTypo]}>Żarówka</Text>
                      </View>
-                   </Pressable>
+                   </TouchableOpacity>
 
-                   <Pressable onPress={() => { setSelectedDevice('DodajGniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
+                   <TouchableOpacity onPress={() => { setSelectedDevice('DodajGniazdko'); setModalVisible(true); }} style={[styles.pomieszczenieInner1, styles.framePressablePosition]}>
                      <View style={styles.rectangleParent}>
                        <LinearGradient
                          style={[styles.groupChild, styles.pressableLayout]}
@@ -159,8 +140,26 @@ const Pomieszczenie = ({deviceData}) => {
                        />
                        <Text style={[styles.arwka, styles.arwkaTypo]}>Gniazdko</Text>
                      </View>
-                   </Pressable>
-                 </View>
+                   </TouchableOpacity>
+
+ <FlatList  style={[styles.lista]}
+            data={devices}
+            numColumns={2}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+              let ComponentToRender = null;
+              if (item.device_type === 'SmartPlug') {
+                ComponentToRender = DodajGniazdko;
+              } else if (item.device_type === 'SmartBulb') {
+                ComponentToRender = DodajZarowke;
+              }
+
+         return ComponentToRender ? <ComponentToRender device={item} /> : null;
+             }}
+             contentContainerStyle={styles.listCon}
+           />
+                 </View >
+
 
                </> // Zamknięcie fragmentu JSX
              );
@@ -175,6 +174,10 @@ const styles = StyleSheet.create({
 
 listCon: {
    paddingHorizontal: 10,
+
+},
+lista:{
+marginTop:-140,
 },
   childPosition: {
     width: '100%',
@@ -195,8 +198,8 @@ listCon: {
   //oba napisy pozycja
   wrapperFlexBox: {
    padding: Padding.p_6xs,
-      justifyContent: 'center',
-      alignItems: 'center',
+   justifyContent: 'center',
+   alignItems: 'center',
   }, //style obu napisów
 
   arwkaTypo1: {
@@ -251,14 +254,14 @@ listCon: {
     overflow: "hidden",
     bottom: "60.99%",
     top: 20,
-    height: "27.34%",
+    height: "30.34%",
     right: "0%",
     width: "100%",
   },//napis dodane
   dodane: {
     fontSize: FontSize.size_lg,
     color: Color.colorGray_100,
-     marginVertical: 10, // Dodaj margines wokół tekstu
+    marginVertical: 10, // Dodaj margines wokół tekstu
 
   },
 
@@ -268,7 +271,8 @@ listCon: {
        width: '100%', // Ustaw szerokość na 100%, aby tekst był wyrównany do lewej
        paddingHorizontal: 10, // Dodaj padding, aby tekst nie dotykał krawędzi ekranu
        left:-15,
-       top: 200,
+       top: 165,
+
 },
 //ustawienie napisu dodaj urzadzenia
   dodajUrzdzeniaWrapper: {
@@ -288,27 +292,28 @@ listCon: {
   strzakabbIcon: {
     height: "25.4%",
     width: "14%",
-    top:-590,
+    top:-300,
     right: "80%",
     left: "6.98%",
-   // position: "absolute",
+    //position: "absolute",
   },
   //wielkosc duzego kafla na ktory sa małe
   pomieszczenieItem: {
     height: "15.23%",
     width: "106.51%",
     right: "1.86%",
-    bottom: "46.6%",
-    left: "1.63%",
+    bottom: "35.6%",
+    left: 1,
     backgroundColor: "#f7f7f7",
-    //position: "absolute",
+    marginTop: 30,
+    position: "absolute",
   },
   pressable: {
     height: "100%",
   }, //pusty kafelek z urzadzeniami
   wrapper: {
     left: "63%",
-    top: -465,
+    top: -177,
     right: "7.21%",
     width: 101,
     height:94,
@@ -379,8 +384,6 @@ listCon: {
   pomieszczenie: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-
-
   },
 });
 
