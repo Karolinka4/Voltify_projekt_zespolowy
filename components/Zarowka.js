@@ -8,7 +8,7 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import Slider from '@react-native-community/slider';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import {BACKEND_API_URL} from '@env';
-
+import EnergiaZarowka from '../screens/EnergiaZarowka';
 /*
 ##########################################################################
 Wygląd Żarówki
@@ -182,7 +182,8 @@ const turnOffBulb = async () => {
           />
           <Text style={[styles.color, styles.colorTypo]}>Action</Text>
         </Pressable>
-        <Pressable style={[styles.rectangleContainer, styles.onoff1bbPosition]}>
+         <Pressable style={[styles.rectangleContainer, styles.onoff1bbPosition]} onPress={() => navigation.navigate('EnergiaZarowka', {device: device})}>
+
           <View style={[styles.frameInner, styles.frameChildPosition]} />
           <Image
             style={[styles.energyIcon, styles.iconLayout]}

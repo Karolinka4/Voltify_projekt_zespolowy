@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dimensions, View, StyleSheet, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { FetchProvider } from './FetchAllDataContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFonts } from 'expo-font';
@@ -13,6 +14,8 @@ import Harmonogram from './screens/Harmonogram';
 import Steruj from './screens/Steruj';
 import Kalendarz from './screens/Kalendarz';
 import WszystkieUrzadzenia from './screens/WszystkieUrzadzenia';
+import EnergiaZarowka from './screens/EnergiaZarowka';
+import EnergiaGniazdko from './screens/EnergiaGniazdko';
 import FrameImage from './components/FrameImage';
 import Frame from './components/Frame';
 import Frame1 from './components/Frame1';
@@ -122,7 +125,7 @@ const App = () => {
   }
 
   return (
-
+    <FetchProvider>
     <NavigationContainer>
       {hideSplashScreen ? (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -147,9 +150,12 @@ const App = () => {
          <Stack.Screen name="Wykres" component={Wykres} />
          <Stack.Screen name="LicznikEn" component={LicznikEn} />
          <Stack.Screen name="WszystkieUrzadzenia" component={WszystkieUrzadzenia} />
+         <Stack.Screen name="EnergiaZarowka" component={EnergiaZarowka} />
+         <Stack.Screen name="EnergiaGniazdko" component={EnergiaGniazdko} />
           </Stack.Navigator>
       ) : null}
     </NavigationContainer>
+    </FetchProvider>
   );
 };
 

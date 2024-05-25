@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import { Modal, View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Color, FontFamily, Border, FontSize } from '../GlobalStyles';
 import {BACKEND_API_URL} from '@env';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+
 /*
 ##########################################################################
 Wygląd edycji,dodawania i usuwania urządzenia (to nie jest wygląd dodania urządzenia)

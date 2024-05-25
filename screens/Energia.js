@@ -3,9 +3,12 @@ import { Text, StyleSheet, ScrollView, Pressable, View } from 'react-native';
 // Import Image z expo-image został usunięty, ponieważ nie był używany w podanym kodzie.
 import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 import LicznikEn from '../components/LicznikEn';
+import { useNavigation } from "@react-navigation/native";
 import Wykres from '../components/Wykres';
+import WszystkieUrzadzenia from './WszystkieUrzadzenia';
 
 const Energia = () => {
+  const navigation = useNavigation();
   return (
     <ScrollView style={styles.energiab} contentContainerStyle={styles.contentContainer}>
 
@@ -19,7 +22,7 @@ const Energia = () => {
         </Pressable>
       </View>
       <View style={[styles.przycisk3bbWrapper, styles.wrapperPosition]}>
-        <Pressable style={styles.przycisk2bb}>
+        <Pressable style={styles.przycisk2bb} onPress={() => navigation.navigate("WszystkieUrzadzenia")}>
           <View style={[styles.przycisk3bbChild, styles.childShadowBox]} />
           <Text style={[styles.pojedynczeUrzdzenia, styles.urzdzeniaTypo]}>
             Pojedyncze urządzenia

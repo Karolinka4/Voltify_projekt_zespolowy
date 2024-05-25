@@ -1,16 +1,16 @@
 import * as React from'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import {useState, useEffect} from'react';
+import {useState, useEffect, useCallback} from'react';
 import { Image } from "expo-image";
 import {BACKEND_API_URL} from '@env';
-import { StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity,ScrollView, KeyboardAvoidingView  } from "react-native";
+import { RefreshControl, StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity,ScrollView, KeyboardAvoidingView  } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Color, Padding, FontFamily, Border, FontSize } from "../GlobalStyles";
 import Urzadzenia from "../components/Urzadzenia";
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import DodajGniazdko from '../components/DodajGniazdko';
 import DodajZarowke from '../components/DodajZarowke';
-
+import {useFetchContext} from '../FetchAllDataContext.js';
 
 
 
@@ -31,6 +31,13 @@ const Pomieszczenie = ({deviceData}) => {
     const { name, image, roomId, devices} = route.params;
     const navigation = useNavigation();
     const [userId, setUserId] = useState(null);
+  const { refreshData } = useFetchContext();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchData().then(() => setRefreshing(false));
+   }, []);
 
   return (
 
@@ -39,7 +46,11 @@ const Pomieszczenie = ({deviceData}) => {
        {/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun(przy false go nie ma, przy true ma być) */}
        <Urzadzenia
               isVisible={isModalVisible}
-              onClose={() => setModalVisible(false)}
+              onClose={() => {
+                setModalVisible(false);
+                refreshData();
+              }
+              }
               selectedDevice={selectedDevice}
               onEdit={false}
               roomId={roomId}
@@ -132,6 +143,9 @@ const Pomieszczenie = ({deviceData}) => {
             data={devices}
             numColumns={2}
             keyExtractor={(item, index) => index.toString()}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
             renderItem={({ item }) => {
               let ComponentToRender = null;
               if (item.device_type === 'SmartPlug') {

@@ -6,6 +6,7 @@ import DodajPokoj from '../components/DodajPokoj';
 import { useNavigation } from "@react-navigation/native";
 import WszystkieUrzadzenia from '../screens/WszystkieUrzadzenia';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+import { useFetchContext } from '../FetchAllDataContext.js';
 /*
 ##########################################################################
 Wygląd Domku odrazu po odpaleniu aplikacji czyli bez żadnego pokoju
@@ -19,6 +20,7 @@ export default function Dom() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editRoom, setEditRoom] = useState(null);
   const [userId, setUserId] = useState(null);
+  const { key } = useFetchContext();
 
   useEffect(() => {
     // Przykład użycia funkcji odczytu danych
@@ -52,7 +54,7 @@ export default function Dom() {
     if (userId) {
       fetchRooms();
     }
-  }, [userId, modalVisible]);//TODO Test modalVisible
+  }, [userId, modalVisible, key]);//TODO Test modalVisible
 
   const handleAddRoom = (room) => {
     addRoomToServer(room);
@@ -153,7 +155,6 @@ export default function Dom() {
     setEditRoom(room);
     setModalVisible(true);
   };
-
   return (
     <View style={styles.domb}>
       <Image

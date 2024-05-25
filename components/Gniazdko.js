@@ -6,6 +6,7 @@ import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 import {BACKEND_API_URL} from '@env';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+import EnergiaGniazdko from '../screens/EnergiaGniazdko';
 
 /*
 ##########################################################################
@@ -90,7 +91,7 @@ const turnOffPlug = async () => {
         />
         <Text style={[styles.action, styles.actionTypo]}>Action</Text>
       </Pressable>
-      <Pressable style={[styles.rectangleContainer, styles.rectanglePosition]}>
+      <Pressable style={[styles.rectangleContainer, styles.rectanglePosition]} onPress={() => navigation.navigate('EnergiaGniazdko', { device: device })}>
         <View style={[styles.frameItem, styles.framePosition]} />
         <Image
           style={[styles.energyIcon, styles.iconLayout]}
