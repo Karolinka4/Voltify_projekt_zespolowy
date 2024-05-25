@@ -23,12 +23,19 @@ const EnergiaGniazdko = () => {
         </Pressable>
         <Text style={styles.headerText}>{device.name}</Text>
       </View>
+       <Image style={styles.Licz}
+            source={require("../assets/LiczGnZa.png")}
+             />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
 
+  Licz:{
+   marginTop: 25,
+   left: 10,
+  },
 
   header: {
     flexDirection: 'row', // Align items in a row

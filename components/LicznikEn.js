@@ -28,7 +28,7 @@ const LicznikEn = () => {
       <Text style={styles.title}>Roczne zużycie energii</Text>
       <Speedometer
         value={calkowiteZuzycieRoczne}
-        totalValue={100000} // Maksymalna wartość na speedometrze, dostosuj do swoich potrzeb
+        totalValue={1000} // Maksymalna wartość na speedometrze, dostosuj do swoich potrzeb
         size={290} // Rozmiar speedometru
         outerColor="#d3d3d3"
         internalColor="#ff4500"
