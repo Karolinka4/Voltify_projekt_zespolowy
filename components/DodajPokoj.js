@@ -49,6 +49,7 @@ const DodajPokoj = ({ visible, onClose, onSubmit, editRoom }) => {
       setImage(result.assets[0].uri);
       setShowImage(true);
     }
+    console.log(image);
   };
 
   const handleSubmit = () => {

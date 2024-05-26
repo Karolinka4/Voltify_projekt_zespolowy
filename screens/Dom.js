@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Text, FlatList } from 'react-native';
+import { Platform, View, StyleSheet, Image, TouchableOpacity, Text, FlatList } from 'react-native';
 import {BACKEND_API_URL} from '@env';
 import Pokoj from '../components/Pokoj';
 import DodajPokoj from '../components/DodajPokoj';
@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import WszystkieUrzadzenia from '../screens/WszystkieUrzadzenia';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import { useFetchContext } from '../FetchAllDataContext.js';
+
 /*
 ##########################################################################
 Wygląd Domku odrazu po odpaleniu aplikacji czyli bez żadnego pokoju
@@ -117,22 +118,34 @@ export default function Dom() {
 
    const editRoomToServer = async(room) => {
       const url = `${BACKEND_API_URL}/api/account/${userId}/room/${room.id}/`;
-      let data = {
-          name: room.name,
-          photo: room.image
-      };
+      const formData = new FormData();
+
+      formData.append('name', room.name);
+
+        const partsUrl = room.image.split('/');
+      const fileNameByUrl = partsUrl[partsUrl.length - 1];
+
+        let photoUrl = room.image;
+              if(!room.image.startsWith('http:')){
+                 photoUrl = `file://${room.image}`;
+                 const photo = {
+                         uri:  photoUrl,
+                         type: 'image/png',
+                         name: fileNameByUrl,
+                       }
+                 formData.append('photo', photo);
+               }
+        console.log(photoUrl);
+
+
       try{
           const response = await fetch(url, {
-          method: 'PATCH',
-          headers: {
-          'Content-Type': 'application/json',
-          },
-
-              body: JSON.stringify(data),
+          method: 'PUT',
+          body: formData,
           });
 
           if(!response.ok){
-              throw new Error('Something went wrong on Dom(editRoomToServer): network error');
+              throw new Error('Something went wrong on Dom(editRoomToServer): network error: ');
           }
 
           const responseData = await response.json();
@@ -141,6 +154,33 @@ export default function Dom() {
               console.error('There was a problem on Dom(editRoomToServer) with the fetch operation:', error);
             }
     };
+
+//    const editRoomToServer = async(room) => {
+//          const url = `${BACKEND_API_URL}/api/account/${userId}/room/${room.id}/`;
+//          let data = {
+//              name: room.name,
+//              photo: room.image
+//          };
+//          try{
+//              const response = await fetch(url, {
+//              method: 'PATCH',
+//              headers: {
+//              'Content-Type': 'application/json',
+//              },
+//
+//                  body: JSON.stringify(data),
+//              });
+//
+//              if(!response.ok){
+//                  throw new Error('Something went wrong on Dom(editRoomToServer): network error');
+//              }
+//
+//              const responseData = await response.json();
+//              console.log(responseData);
+//          } catch(error){
+//                  console.error('There was a problem on Dom(editRoomToServer) with the fetch operation:', error);
+//                }
+//        };
 
   const handleDeleteRoom = (roomId) => {
     deleteRoomFromServer(roomId);

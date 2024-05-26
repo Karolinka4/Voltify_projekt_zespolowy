@@ -14,6 +14,7 @@ const screenWidth = Dimensions.get('window').width;
 
 const EnergiaGniazdko = () => {
 
+     const navigation = useNavigation();
      const chartConfig = {
            backgroundGradientFrom: "#ffffff", // Ustawienie na biały
             backgroundGradientTo: "#ffffff", // Ustawienie na biały

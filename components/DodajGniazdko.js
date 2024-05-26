@@ -47,8 +47,8 @@ const DodajGniazdko = ({ device }) => {
             <View style={styles.header}>
                 <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>{device.name}</Text>
                 <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    trackColor={{ false: "#767577", true: "#767577" }}
+                    thumbColor={isEnabled ? "#00FF00" : "#ff0000"}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={toggleSwitch}
                     value={isEnabled}
