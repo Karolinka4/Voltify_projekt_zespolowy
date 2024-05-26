@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, Text, Image, FlatList } from 'react-native';
 // Note: Make sure the import path for Image is correct. If you're using expo-image, adjust accordingly.
 // import { Image } from "expo-image";
-import DodajZarowke from '../components/DodajZarowke';
-import DodajGniazdko from '../components/DodajGniazdko';
+import DodajZarowke from '../components/DodajZarowke2';
+import DodajGniazdko from '../components/DodajGniazdko2';
 import { BACKEND_API_URL } from '@env';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 

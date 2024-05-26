@@ -9,52 +9,25 @@ const DodajGniazdko = ({ device }) => {
     const navigation = useNavigation();
     const [userId, setUserId] = useState(null);
 
-    useEffect(() => {
-        getDataFromStorage('@myKey').then((data) => {
-            setUserId(data.Key);
-        });
+//    useEffect(() => {
+//        getDataFromStorage('@myKey').then((data) => {
+//            setUserId(data.Key);
+//        });
+//
+//         if(device.power){
+//            setIsEnabled(true);
+//         } else {
+//            setIsEnabled(false);
+//         }
+//    }, []);
 
-         if(device.power){
-            setIsEnabled(true);
-         } else {
-            setIsEnabled(false);
-         }
-    }, []);
-
-    const toggleSwitch = async () => {
-        const newState = !isEnabled;
-        setIsEnabled(newState); // Zaktualizuj stan lokalny
-
-        // Określ, który endpoint powinien zostać wywołany w zależności od nowego stanu
-        const endpoint = newState ? 'on' : 'off';
-
-        try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/${endpoint}/`, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Network response on DodajGniazdko(toogleSwtich) was not ok');
-            }
-            // Tutaj możesz dodać logikę obsługującą pomyślne przełączenie stanu
-        } catch (error) {
-            console.error('Error:', error);
-            setIsEnabled(!newState); // Przywróć poprzedni stan w przypadku błędu
-        }
-    };
 
     return (
         <View style={[styles.tile, { backgroundColor: isEnabled ? '#FF8080' : '#FFC0CB' }]}>
             <View style={styles.header}>
                 <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>{device.name}</Text>
-                <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                />
             </View>
-            <Pressable style={styles.content} onPress={() => navigation.navigate('Gniazdko', { device: device })}>
+            <Pressable style={styles.content} onPress={() => navigation.navigate('EnergiaGniazdko', { device: device })}>
                 <Image
                     style={styles.arwkaIcon}
                     resizeMode="cover"

@@ -13,66 +13,26 @@ const DodajZarowke = ({ device }) => {
     const [userId, setUserId] = useState(null); // Zakładamy, że userId jest potrzebne
     const navigation = useNavigation();
 
-    useEffect(() => {
-         getDataFromStorage('@myKey').then((data) => {
-             setUserId(data.Key);
-         });
+//    useEffect(() => {
+//         getDataFromStorage('@myKey').then((data) => {
+//             setUserId(data.Key);
+//         });
+//
+//         if(device.power){
+//            setIsEnabled(true);
+//         } else {
+//             setIsEnabled(false);
+//         }
+//    }, []);
 
-         if(device.power){
-            setIsEnabled(true);
-         } else {
-             setIsEnabled(false);
-         }
-    }, []);
-
-    const toggleSwitch = async () => {
-        setIsEnabled(previousState => !previousState);
-        if (!isEnabled) {
-            await turnOnBulb(); // Włącz żarówkę, jeśli jest wyłączona
-        } else {
-            await turnOffBulb(); // Wyłącz żarówkę, jeśli jest włączona
-        }
-    };
-
-    const turnOnBulb = async () => {
-        try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/on/`, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Network response on DodajZarówke(turnOnBulb) was not ok');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    const turnOffBulb = async () => {
-        try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/off/`, {
-                method: 'GET',
-            });
-            if (!response.ok) {
-                throw new Error('Network response on DodajZarówke(turnOffBulb) was not ok');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
 
     return (
 
         <View style={[styles.tile, { backgroundColor: isEnabled ? '#FFF' : '#000' }]}>
             <View style={styles.header}>
                 <Text style={{ color: isEnabled ? '#000' : '#FFF' }}>{device.name}</Text>
-                <Switch
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
-                />
             </View>
-            <Pressable style={styles.content} onPress={() => navigation.navigate('Zarowka', { device: device })}>
+            <Pressable style={styles.content} onPress={() => navigation.navigate('EnergiaZarowka', { device: device })}>
                 <Image
                     style={styles.arwkaIcon}
                     resizeMode="cover"

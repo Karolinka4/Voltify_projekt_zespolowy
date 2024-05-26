@@ -6,6 +6,7 @@ import DodajPokoj from '../components/DodajPokoj';
 import { useNavigation } from "@react-navigation/native";
 import WszystkieUrzadzenia from '../screens/WszystkieUrzadzenia';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
+import { useFetchContext } from '../FetchAllDataContext.js';
 /*
 ##########################################################################
 Wygląd Domku odrazu po odpaleniu aplikacji czyli bez żadnego pokoju
@@ -19,6 +20,7 @@ export default function Dom() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editRoom, setEditRoom] = useState(null);
   const [userId, setUserId] = useState(null);
+  const { key } = useFetchContext();
 
   useEffect(() => {
     // Przykład użycia funkcji odczytu danych
@@ -29,6 +31,7 @@ export default function Dom() {
 
 //@@@@@@@@@@@@@@@@@@@@@@@ może [userId, rooms] trzeba dopisać rooms
    useEffect(() => {
+      console.log("Pobieram dane na głównej stronie(pokoje, urżądzenia itp)");
        const fetchRooms = async () => {
          const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;// ########### tutaj też jest na stałe przypisana 1
          try {
@@ -51,7 +54,7 @@ export default function Dom() {
     if (userId) {
       fetchRooms();
     }
-  }, [userId, modalVisible]);//TODO Test modalVisible
+  }, [userId, modalVisible, key]);//TODO Test modalVisible
 
   const handleAddRoom = (room) => {
     addRoomToServer(room);
@@ -118,8 +121,6 @@ export default function Dom() {
           name: room.name,
           photo: room.image
       };
-        console.log(room.name);
-        console.log(room.image);
       try{
           const response = await fetch(url, {
           method: 'PATCH',
@@ -154,7 +155,6 @@ export default function Dom() {
     setEditRoom(room);
     setModalVisible(true);
   };
-
   return (
     <View style={styles.domb}>
       <Image
