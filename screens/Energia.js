@@ -5,13 +5,13 @@ import { Border, Color, FontFamily, FontSize } from '../GlobalStyles';
 import LicznikEn from '../components/LicznikEn';
 import { useNavigation } from "@react-navigation/native";
 import Wykres from '../components/Wykres';
-import WszystkieUrzadzenia from './WszystkieUrzadzenia';
+import PojedynczeUrzadzenia from './WszystkieUrzadzenia';
 
 const Energia = () => {
     const navigation = useNavigation();
     return (
-        <ScrollView style={styles.energiab} contentContainerStyle={styles.contentContainer}>
-
+        <View style={styles.energiab} contentContainerStyle={styles.contentContainer}>
+           <ScrollView>
             <View style={[styles.przycisk2bbWrapper, styles.wrapperPosition]}>
                 <Text style={styles.monitorowanieEnergii}>Monitorowanie energii</Text>
                 <Pressable style={styles.przycisk2bb}>
@@ -22,7 +22,7 @@ const Energia = () => {
                 </Pressable>
             </View>
             <View style={[styles.przycisk3bbWrapper, styles.wrapperPosition]}>
-                <Pressable style={styles.przycisk2bb} onPress={() => navigation.navigate("WszystkieUrzadzenia")}>
+                <Pressable style={styles.przycisk2bb} onPress={() => navigation.navigate("PojedynczeUrzadzenia")}>
                     <View style={[styles.przycisk3bbChild, styles.childShadowBox]} />
                     <Text style={[styles.pojedynczeUrzdzenia, styles.urzdzeniaTypo]}>
                         Pojedyncze urządzenia
@@ -30,12 +30,14 @@ const Energia = () => {
                 </Pressable>
             </View>
             <View style={styles.licznikEn}>
-                <LicznikEn />
-            </View>
+                              <LicznikEn />
+                               </View>
             <View style={styles.wykres}>
                 <Wykres />
             </View>
-        </ScrollView>
+
+ </ScrollView>
+ </View>
     );
 };
 
@@ -45,6 +47,7 @@ const styles = StyleSheet.create({
         //flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
+
     },
     wrapperPosition: {
         left: 35,
@@ -58,18 +61,17 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "88.85%",
         textAlign: "center",
-
-
-
     },
     wykres: {
         width: "100%",
         height: "100%",
-        marginTop: 120,
+        top: -1375,
+
     },
     licznikEn: {
         width: "100%",
         height: "100%",
+        top: -630,
 
     },
     childShadowBox: {
@@ -132,10 +134,9 @@ const styles = StyleSheet.create({
     },
     energiab: {
         backgroundColor: Color.colorWhite,
-        flex: 1,
-        height: 1714,
         overflow: "hidden",
         width: "100%",
+
     },
 });
 

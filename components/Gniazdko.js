@@ -28,6 +28,12 @@ const Gniazdko = () => {
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
         });
+     if(device.power){
+        setIsPressed(true);
+     } else {
+        setIsPressed(false);
+     }
+
     }, []);
 
     // Funkcja zmieniająca stan
@@ -41,9 +47,8 @@ const Gniazdko = () => {
     };
 
     const turnOnPlug = async () => {
-        const plugId = '2';
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${plugId}/on/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/on/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -55,9 +60,8 @@ const Gniazdko = () => {
     };
 
     const turnOffPlug = async () => {
-        const plugId = '2';
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${plugId}/off/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/off/`, {
                 method: 'GET',
             });
             if (!response.ok) {

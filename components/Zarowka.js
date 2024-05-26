@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text, Pressable, KeyboardAvoidingView } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -9,6 +9,8 @@ import Slider from '@react-native-community/slider';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import { BACKEND_API_URL } from '@env';
 import EnergiaZarowka from '../screens/EnergiaZarowka';
+import UrzadzeniaEdit from "./UrzadzeniaEdit";
+import { useFetchContext } from '../FetchAllDataContext.js';
 /*
 ##########################################################################
 Wygląd Żarówki
@@ -16,6 +18,7 @@ Wygląd Żarówki
 */
 
 const Zarowka = () => {
+    const [isModalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
     const [brightness, setBrightness] = useState(1); // Zakładamy, że 1 to pełna jasność
     const [isPressed, setIsPressed] = useState(false);
@@ -23,6 +26,7 @@ const Zarowka = () => {
     const [brightnessOff, setBrightnessOff] = useState(0); //Jest potrzebne, żeby Ci nie skakało, rozwiązanie zrobione na kolanie
     const route = useRoute();
     const { device } = route.params;
+      const { refreshData } = useFetchContext();
 
 
     useEffect(() => {
@@ -30,6 +34,12 @@ const Zarowka = () => {
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
         });
+        if(device.power){
+            etIsPressed(true);
+        } else {
+            setIsPressed(false);
+        }
+
     }, []);
 
     const togglePress = async () => {
@@ -43,9 +53,8 @@ const Zarowka = () => {
 
 
     const setBulbBrightness = async (brightnessValue) => {
-        const bulbId = '4'; // Przykładowe ID żarówki, które powinno być dostosowane do Twojego przypadku
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/brightness/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/brightness/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,9 +75,8 @@ const Zarowka = () => {
 
 
     const turnOnBulb = async () => {
-        const bulbId = '4';
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/on/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/on/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -80,9 +88,8 @@ const Zarowka = () => {
     };
 
     const turnOffBulb = async () => {
-        const bulbId = '4';
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${bulbId}/off/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/off/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -95,6 +102,22 @@ const Zarowka = () => {
 
 
     return (
+    <>
+        <KeyboardAvoidingView>
+        {/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun(przy false go nie ma, przy true ma być) */}
+            <UrzadzeniaEdit
+                isVisible={isModalVisible}
+                    onClose={() => {
+                        setModalVisible(false);
+                        refreshData();
+                        navigation.goBack();
+                   }}
+                   selectedDevice={device.device_type}
+                   onEdit={true}
+                   deviceId={device.id}
+             />
+                </KeyboardAvoidingView>
+
         <View style={styles.zarowka}>
             <View style={styles.zarowkaChild} />
             <View style={styles.arwka1Wrapper}>
@@ -205,15 +228,16 @@ const Zarowka = () => {
                 </Pressable>
             </View>
             <View style={styles.frameView}>
-                <View style={[styles.frameChild2, styles.frameChildPosition]} />
+                <Pressable style={[styles.frameChild, styles.frameChildPosition]} onPress={() => setModalVisible(true)}>
                 <Image
                     style={[styles.edit02Icon, styles.frameIconLayout]}
                     resizeMode="cover"
                     source={require("../assets/edit021.png")}
                 />
+                </Pressable>
             </View>
-
         </View>
+        </>
     );
 };
 

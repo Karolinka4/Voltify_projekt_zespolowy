@@ -14,6 +14,7 @@ import Harmonogram from './screens/Harmonogram';
 import Steruj from './screens/Steruj';
 import Kalendarz from './screens/Kalendarz';
 import WszystkieUrzadzenia from './screens/WszystkieUrzadzenia';
+import PojedynczeUrzadzenia from './screens/PojedynczeUrzadzenia';
 import EnergiaZarowka from './screens/EnergiaZarowka';
 import EnergiaGniazdko from './screens/EnergiaGniazdko';
 import FrameImage from './components/FrameImage';
@@ -30,8 +31,11 @@ import Pomieszczenie from './screens/Pomieszczenie';
 import Gniazdko from './components/Gniazdko';
 import Zarowka from './components/Zarowka';
 import Urzadzenia from './components/Urzadzenia';
+import UrzadzeniaEdit from './components/UrzadzeniaEdit';
 import DodajZarowke from './components/DodajZarowke';
+import DodajZarowke2 from './components/DodajZarowke2';
 import DodajGniazdko from './components/DodajGniazdko';
+import DodajGniazdko2 from './components/DodajGniazdko2';
 import Wykres from './components/Wykres';
 import LicznikEn from './components/LicznikEn';
 import Logowanie from './screens/Logowanie'; // Zaimportuj ekran logowania
@@ -144,12 +148,16 @@ const App = () => {
          <Stack.Screen name="Gniazdko" component={Gniazdko} />
          <Stack.Screen name="Zarowka" component={Zarowka} />
          <Stack.Screen name="Urzadzenia" component={Urzadzenia} />
+         <Stack.Screen name="UrzadzeniaEdit" component={UrzadzeniaEdit} />
          <Stack.Screen name="Kalendarz" component={Kalendarz} />
          <Stack.Screen name="DodajZarowke" component={DodajZarowke} />
+         <Stack.Screen name="DodajZarowke2" component={DodajZarowke2} />
          <Stack.Screen name="DodajGniazdko" component={DodajGniazdko} />
+         <Stack.Screen name="DodajGniazdko2" component={DodajGniazdko2} />
          <Stack.Screen name="Wykres" component={Wykres} />
          <Stack.Screen name="LicznikEn" component={LicznikEn} />
          <Stack.Screen name="WszystkieUrzadzenia" component={WszystkieUrzadzenia} />
+         <Stack.Screen name="PojedynczeUrzadzenia" component={PojedynczeUrzadzenia} />
          <Stack.Screen name="EnergiaZarowka" component={EnergiaZarowka} />
          <Stack.Screen name="EnergiaGniazdko" component={EnergiaGniazdko} />
           </Stack.Navigator>

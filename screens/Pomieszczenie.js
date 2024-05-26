@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Image } from "expo-image";
 import { BACKEND_API_URL } from '@env';
 import { RefreshControl, StyleSheet, Text, View, Pressable, FlatList, Modal, TouchableOpacity, ScrollView, KeyboardAvoidingView } from "react-native";
@@ -26,18 +26,33 @@ const Pomieszczenie = ({ deviceData }) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState(null);
 
-    //const [devices, setDevices] = useState([]);
     const route = useRoute();
     const { name, image, roomId, devices } = route.params;
     const navigation = useNavigation();
+    const [updatedDevices, setUpdatedDevices] = useState(devices);
     const [userId, setUserId] = useState(null);
     const { refreshData } = useFetchContext();
     const [refreshing, setRefreshing] = useState(false);
+    const isMounted = useRef(false);
+
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         fetchData().then(() => setRefreshing(false));
     }, []);
+
+    useEffect(() => {
+        if (isMounted.current) {
+          if(isModalVisible == false)
+          {
+            //fetchDevicesData(); {/*Tutaj można dać pobieranie danych z backendu i aktualizacja updatedDevices, aby na bierząco się aktualizowały urządzenia */}
+          }
+        } else {
+          isMounted.current = true;
+        }
+      }, [isModalVisible]); // Efekt zależny od zmiany `myState`
+
+
 
     return (
 
@@ -140,7 +155,7 @@ const Pomieszczenie = ({ deviceData }) => {
                 </TouchableOpacity>
 
                 <FlatList style={[styles.lista]}
-                    data={devices}
+                    data={updatedDevices}
                     numColumns={2}
                     keyExtractor={(item, index) => index.toString()}
                     refreshControl={
