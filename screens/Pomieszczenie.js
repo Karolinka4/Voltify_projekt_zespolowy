@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Image } from "expo-image";
 import { BACKEND_API_URL } from '@env';
@@ -36,8 +36,17 @@ const Pomieszczenie = ({ deviceData }) => {
      useEffect(() => {
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
+            console.log("Odebrałem urzytkownika!");
         });
       }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            if(userId != null){
+                fetchDevicesData(); // Przykładowo, odświeżenie danych urządzeń
+            }
+        }, [userId])
+    );
 
     const fetchDevicesData = async () => {
              const url = `${BACKEND_API_URL}/api/account/${userId}/room/${roomId}`;
@@ -49,7 +58,7 @@ const Pomieszczenie = ({ deviceData }) => {
                  },
                });
             if (!response.ok) {
-              throw new Error('Network response on DOM(fetchROoms) was not ok: ' + response);
+              throw new Error(`Network response on DOM(fetchROoms) was not ok: ${response.status} ${response.statusText}, ${url}`);
             }
 
             let roomData = await response.json();
@@ -171,7 +180,7 @@ const Pomieszczenie = ({ deviceData }) => {
                             ComponentToRender = DodajZarowke;
                         }
 
-                        return ComponentToRender ? <ComponentToRender device={item} /> : null;
+                        return ComponentToRender ? <ComponentToRender device={item} roomId={roomId} /> : null;
                     }}
                     contentContainerStyle={styles.listCon}
                 />

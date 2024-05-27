@@ -4,13 +4,10 @@ import { Image } from 'react-native'; // Jeśli używasz expo-image, upewnij si�
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { BACKEND_API_URL } from '@env'; // Upewnij się, że ten plik istnieje i zawiera odpowiednią zmienną środowiskową
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
-// Zakładamy, że getDataFromStorage jest wcześniej zdefiniowaną funkcją
-// Jeśli nie, musisz ją zaimplementować lub usunąć odniesienie
-// import { getDataFromStorage } from 'gdzieś';
 
-const DodajZarowke = ({ device }) => {
+const DodajZarowke = ({ device, roomId }) => {
     const [isEnabled, setIsEnabled] = useState(false);
-    const [userId, setUserId] = useState(null); // Zakładamy, że userId jest potrzebne
+    const [userId, setUserId] = useState(null);
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -72,7 +69,7 @@ const DodajZarowke = ({ device }) => {
                     value={isEnabled}
                 />
             </View>
-            <Pressable style={styles.content} onPress={() => navigation.navigate('Zarowka', { device: device })}>
+            <Pressable style={styles.content} onPress={() => navigation.navigate('Zarowka', { device: device, roomId: roomId })}>
                 <Image
                     style={styles.arwkaIcon}
                     resizeMode="cover"

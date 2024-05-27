@@ -4,7 +4,8 @@ import { Image } from 'react-native'; // Zmieniłem import na 'react-native', je
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { BACKEND_API_URL } from '@env';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
-const DodajGniazdko = ({ device }) => {
+
+const DodajGniazdko = ({ device, roomId }) => {
     const [isEnabled, setIsEnabled] = useState(false);
     const navigation = useNavigation();
     const [userId, setUserId] = useState(null);
@@ -54,7 +55,7 @@ const DodajGniazdko = ({ device }) => {
                     value={isEnabled}
                 />
             </View>
-            <Pressable style={styles.content} onPress={() => navigation.navigate('Gniazdko', { device: device })}>
+            <Pressable style={styles.content} onPress={() => navigation.navigate('Gniazdko', { device: device, roomId: roomId })}>
                 <Image
                     style={styles.arwkaIcon}
                     resizeMode="cover"

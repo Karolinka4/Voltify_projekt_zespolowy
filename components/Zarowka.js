@@ -25,22 +25,27 @@ const Zarowka = () => {
     const [userId, setUserId] = useState(null);
     const [brightnessOff, setBrightnessOff] = useState(0); //Jest potrzebne, żeby Ci nie skakało, rozwiązanie zrobione na kolanie
     const route = useRoute();
-    const { device } = route.params;
-      const { refreshData } = useFetchContext();
-
+    const { device, roomId } = route.params;
+    const { refreshData } = useFetchContext();
+    const [updateDevice, setUpdatedDevice] = useState(device);
 
     useEffect(() => {
         // Przykład użycia funkcji do odczytu danych
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
         });
-        if(device.power){
+        if(updateDevice.power){
             etIsPressed(true);
         } else {
             setIsPressed(false);
         }
-
     }, []);
+
+    useEffect(() => {
+        if(userId != null){
+                    fetchDevicesData();
+                   }
+    }, [isModalVisible])
 
     const togglePress = async () => {
         setIsPressed(!isPressed); // Zaktualizuj stan
@@ -51,10 +56,9 @@ const Zarowka = () => {
         }
     };
 
-
     const setBulbBrightness = async (brightnessValue) => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/brightness/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${updateDevice.id}/brightness/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,10 +77,9 @@ const Zarowka = () => {
         }
     };
 
-
     const turnOnBulb = async () => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/on/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${updateDevice.id}/on/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -89,7 +92,7 @@ const Zarowka = () => {
 
     const turnOffBulb = async () => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${device.id}/off/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${updateDevice.id}/off/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -99,7 +102,26 @@ const Zarowka = () => {
             console.error('Error:', error);
         }
     };
+       const fetchDevicesData = async () => {
+             const url = `${BACKEND_API_URL}/api/account/${userId}/room/${roomId}/`;
+             try {
+               const response = await fetch(url, {
+                 method: 'GET',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+               });
+            if (!response.ok) {
+              throw new Error(`Network response on Zarowka(fetchDevicesData) was not ok: ${response.status} ${response.statusText}, ${url}`);
+            }
 
+            let roomData = await response.json();
+            setUpdatedDevice(roomData.devices);
+            console.log("Device save update");
+          } catch (error) {
+            console.error('There was a problem on Zarowka(fetchDevicesData) with the fetch operation:', error);
+          }
+        };
 
     return (
     <>
@@ -109,19 +131,21 @@ const Zarowka = () => {
                 isVisible={isModalVisible}
                     onClose={() => {
                         setModalVisible(false);
+                   }}
+                   onDeleteClose={() => {
+                        setModalVisible(false);
                         refreshData();
                         navigation.goBack();
                    }}
-                   selectedDevice={device.device_type}
+                   selectedDevice={updateDevice}
                    onEdit={true}
-                   deviceId={device.id}
              />
                 </KeyboardAvoidingView>
 
         <View style={styles.zarowka}>
             <View style={styles.zarowkaChild} />
             <View style={styles.arwka1Wrapper}>
-                <Text style={styles.arwka1}>{device.name}</Text>
+                <Text style={styles.arwka1}>{updateDevice.name}</Text>
                 <Pressable onPress={() => navigation.goBack()}>
                     <Image
                         style={[styles.strzakabbIcon, styles.frameIconLayout]}
@@ -205,7 +229,7 @@ const Zarowka = () => {
                     />
                     <Text style={[styles.color, styles.colorTypo]}>Action</Text>
                 </Pressable>
-                <Pressable style={[styles.rectangleContainer, styles.onoff1bbPosition]} onPress={() => navigation.navigate('EnergiaZarowka', { device: device })}>
+                <Pressable style={[styles.rectangleContainer, styles.onoff1bbPosition]} onPress={() => navigation.navigate('EnergiaZarowka', { device: updateDevice })}>
 
                     <View style={[styles.frameInner, styles.frameChildPosition]} />
                     <Image

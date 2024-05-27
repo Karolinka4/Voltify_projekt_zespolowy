@@ -1,12 +1,14 @@
 import * as React from "react";
 import { useState, useEffect } from 'react';
-import { Pressable, StyleSheet, View, Text } from "react-native";
+import { Pressable, StyleSheet, View, Text, KeyboardAvoidingView } from "react-native";
 import { Image } from "expo-image";
 import { Color, FontFamily, Border, FontSize } from "../GlobalStyles";
 import { BACKEND_API_URL } from '@env';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getDataFromStorage } from '../AsyncStorage/AsyncStorage';
 import EnergiaGniazdko from '../screens/EnergiaGniazdko';
+import UrzadzeniaEdit from "./UrzadzeniaEdit";
+import { useFetchContext } from '../FetchAllDataContext.js';
 
 /*
 ##########################################################################
@@ -16,39 +18,46 @@ Wygląd Gniazdka
 
 
 const Gniazdko = () => {
+    const [isModalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
-    // Stan do śledzenia, czy przycisk jest wciśnięty
     const [isPressed, setIsPressed] = useState(false);
     const [userId, setUserId] = useState(null);
     const route = useRoute();
-    const { device } = route.params;
+    const { device, roomId } = route.params;
+    const { refreshData } = useFetchContext();
+    const [updateDevice, setUpdatedDevice] = useState(device);
 
     useEffect(() => {
         // Przykład użycia funkcji do odczytu danych
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
         });
-     if(device.power){
+     if(updateDevice.power){
         setIsPressed(true);
      } else {
         setIsPressed(false);
      }
-
     }, []);
 
+    useEffect(() => {
+        if(userId != null){
+            fetchDevicesData();
+           }
+        }, [isModalVisible])
+
     // Funkcja zmieniająca stan
-    const togglePress = () => {
-        if (isPressed) {
-            turnOffPlug(); // Wyłącz gniazdko, jeśli jest włączone
-        } else {
-            turnOnPlug(); // Włącz gniazdko, jeśli jest wyłączone
-        }
+    const togglePress = async () => {
         setIsPressed(!isPressed); // Zaktualizuj stan
+        if (!isPressed) {
+          await  turnOffPlug(); // Włącz gniazdko, jeśli jest wyłączona
+        } else {
+          await  turnOnPlug(); // Wyłącz gniazdko, jeśli jest włączona
+        }
     };
 
     const turnOnPlug = async () => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/on/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${updateDevice.id}/on/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -61,7 +70,7 @@ const Gniazdko = () => {
 
     const turnOffPlug = async () => {
         try {
-            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${device.id}/off/`, {
+            const response = await fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${updateDevice.id}/off/`, {
                 method: 'GET',
             });
             if (!response.ok) {
@@ -72,12 +81,57 @@ const Gniazdko = () => {
         }
     };
 
+       const fetchDevicesData = async () => {
+             const url = `${BACKEND_API_URL}/api/account/${userId}/room/${roomId}/`;
+             try {
+               const response = await fetch(url, {
+                 method: 'GET',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+               });
+            if (!response.ok) {
+              throw new Error(`Network response on Gniazdko(fetchDevicesData) was not ok: ${response.status} ${response.statusText}, ${url}`);
+            }
 
+            let roomData = await response.json();
+            setUpdatedDevice(roomData.devices);
+            console.log("Device save update");
+          } catch (error) {
+            console.error('There was a problem on Gniazdko(fetchDevicesData) with the fetch operation:', error);
+          }
+        };
 
 
     return (
+    <>
+        <KeyboardAvoidingView>
+                {/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun(przy false go nie ma, przy true ma być) */}
+                    <UrzadzeniaEdit
+                        isVisible={isModalVisible}
+                            onClose={() => {
+                                setModalVisible(false);
+                           }}
+                           onDeleteClose={() => {
+                                setModalVisible(false);
+                                refreshData();
+                                navigation.goBack();
+                           }}
+                           selectedDevice={updateDevice}
+                           onEdit={true}
+                     />
+                        </KeyboardAvoidingView>
+
         <View style={styles.gniazdko}>
-            <Pressable style={styles.rectangleParent}>
+            <Pressable onPress={() => navigation.goBack()}>
+                        <Image
+                            style={[styles.strzakabbIcon, styles.iconLayout1]}
+                            resizeMode="cover"
+                            source={require("../assets/strzakabb2.png")}
+                        />
+                    </Pressable>
+
+            <Pressable style={styles.rectangleParent} onPress={() => setModalVisible(true)}>
                 <View style={[styles.frameChild, styles.framePosition]} />
                 <Image
                     style={[styles.edit02Icon, styles.iconLayout1]}
@@ -95,7 +149,7 @@ const Gniazdko = () => {
                 />
                 <Text style={[styles.action, styles.actionTypo]}>Action</Text>
             </Pressable>
-            <Pressable style={[styles.rectangleContainer, styles.rectanglePosition]} onPress={() => navigation.navigate('EnergiaGniazdko', { device: device })}>
+            <Pressable style={[styles.rectangleContainer, styles.rectanglePosition]} onPress={() => navigation.navigate('EnergiaGniazdko', { device: updateDevice })}>
                 <View style={[styles.frameItem, styles.framePosition]} />
                 <Image
                     style={[styles.energyIcon, styles.iconLayout]}
@@ -104,13 +158,7 @@ const Gniazdko = () => {
                 />
                 <Text style={[styles.action, styles.actionTypo]}>Energy</Text>
             </Pressable>
-            <Pressable onPress={() => navigation.goBack()}>
-                <Image
-                    style={[styles.strzakabbIcon, styles.iconLayout1]}
-                    resizeMode="cover"
-                    source={require("../assets/strzakabb2.png")}
-                />
-            </Pressable>
+
             <View style={[styles.przyciskOnbb, styles.rectanglePosition]}>
                 <Pressable style={[styles.przyciskOnoff, styles.przyciskPosition]} onPress={togglePress}>
                     <Image
@@ -126,8 +174,9 @@ const Gniazdko = () => {
                     />
                 </Pressable>
             </View>
-            <Text style={[styles.gniazdko1, styles.actionTypo]}>{device.name}</Text>
+            <Text style={[styles.gniazdko1, styles.actionTypo]}>{updateDevice.name}</Text>
         </View>
+</>
     );
 };
 

@@ -11,11 +11,12 @@ Wygląd edycji,dodawania i usuwania urządzenia (to nie jest wygląd dodania urz
 ###########################################################################
 */
 {/* tutaj dodałem nową zmienną onEdit, któa jest odpowiedzialna za wyswietlanie przycisku usun  */ }
-const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, onDelete, deviceId }) => {
+const UrzadzeniaEdit = ({ isVisible, onClose, onDeleteClose, selectedDevice, onEdit, onSave, onDelete, }) => {
     const [nazwa, setNazwa] = useState('');
     const [ip, setIp] = useState('');
     const [userId, setUserId] = useState(null);
-    const [cost, setCost] = useState('');
+    const [cost, setCost] = useState(0);
+    const [deviceType, setDeviceType] = useState('');//0 - smartbulb, 1 - smartplug
     //const [color, setColor] = useState('#000000');
 
     useEffect(() => {
@@ -23,33 +24,51 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
         getDataFromStorage('@myKey').then((data) => {
             setUserId(data.Key);
         });
+        if (selectedDevice.device_type === "SmartBulb") {
+            setDeviceType(0);
+        }
+        else {
+            setDeviceType(1);
+        }
+        if (selectedDevice!== null) {
+            setNazwa(selectedDevice.name);
+            setIp(selectedDevice.ip);
+            setCost(selectedDevice.energy_cost);
+        }
     }, []);
-
 
     const handleSave = () => {
         const data = { name: nazwa, ip, energy_cost: cost };
-        if (selectedDevice === "SmartBulb") {
-            addSmartBulb(data).then(() => {
+        if (deviceType === '0') {
+            editSmartBulb(data).then(() => {
                 onCloseModal();
             });
         }
         else {
-            addSmartPlug(data).then(() => {
+            editSmartPlug(data).then(() => {
                 onCloseModal();
             });
         }
-
     };
 
-    const onCloseModal = () => {
-        setCost('');
-        setIp('');
-        setNazwa('');
-        onClose();
+    const handleDelete = () =>{
+        if(deviceType === '0'){
+            handleDeleteSmartBulb();
+        }
+        else {
+            handleDeleteSmartPlug();
+        }
     }
 
-    const handleDelete = () => {
-        fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${deviceId}/`, {
+       const onCloseModal = () => {
+            setNazwa(selectedDevice.name);
+            setIp(selectedDevice.ip);
+            setCost(selectedDevice.energy_cost);
+            onClose();
+        }
+
+    const handleDeleteSmartBulb = () => {
+        fetch(`${BACKEND_API_URL}/api/account/${userId}/smartbulb/${selectedDevice.id}/`, {
             method: 'DELETE',
         })
             .then(response => {
@@ -64,16 +83,39 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
                 return response.json();
             })
             .then(data => {
-                onClose();
+                onDeleteClose();
             })
             .catch((error) => {
                 console.error('Error in UrządzenieEdit(handleDetele):', error);
             });
     };
 
+    const handleDeleteSmartPlug = () => {
+            fetch(`${BACKEND_API_URL}/api/account/${userId}/smartplug/${selectedDevice.id}/`, {
+                method: 'DELETE',
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response on UrzadzenieEdit(handleDelete) was not ok');
+                    }
+                    if (response.status === 204 || response.statusText === 'No Content') {
+                                console.log('Device deleted successfully by UrządzenieEdit(handleDelete)');
+                                onClose();
+                                return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    onDeleteClose();
+                })
+                .catch((error) => {
+                    console.error('Error in UrządzenieEdit(handleDetele):', error);
+                });
+        };
 
-    const addSmartBulb = async (deviceData) => {
-        const url = `${BACKEND_API_URL}/api/account/${userId}/smartbulb/${deviceId}/`;
+
+    const editSmartBulb = async (deviceData) => {
+        const url = `${BACKEND_API_URL}/api/account/${userId}/smartbulb/${selectedDevice.id}/`;
         try {
             const response = await fetch(url, {
                 method: 'PATCH',
@@ -83,17 +125,17 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
                 body: JSON.stringify(deviceData),
             });
             if (!response.ok) {
-                throw new Error('Network response on UrządzeniaEdit(addSmartBulb) was not ok: ' + response);
+                throw new Error(`Network response oni UrządzeniaEdit(editSmartBulb) was not ok: ${response.status} ${response.statusText}, ${url}`);
             }
             const responseData = await response.json();
             onCloseModal();
         } catch (error) {
-            console.error('There was a problem on UrządzeniaEdit(addSmartBulb) with the fetch operation:', error);
+            console.error('There was a problem on UrządzeniaEdit(editSmartBulb) with the fetch operation:', error);
 
         }
     };
-     const addSmartPlug = async (deviceData) => {
-            const url = `${BACKEND_API_URL}/api/account/${userId}/smartplug/${deviceId}/`;
+     const editSmartPlug = async (deviceData) => {
+            const url = `${BACKEND_API_URL}/api/account/${userId}/smartplug/${selectedDevice.id}/`;
             try {
                 const response = await fetch(url, {
                     method: 'PATCH',
@@ -103,12 +145,12 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
                     body: JSON.stringify(deviceData),
                 });
                 if (!response.ok) {
-                    throw new Error('Network response on UrządzeniaEdit(addSmartPlug) was not ok: ' + response);
+                    throw new Error('Network response on UrządzeniaEdit(editSmartPlug) was not ok: ' + response);
                 }
                 const responseData = await response.json();
                 onCloseModal();
             } catch (error) {
-                console.error('There was a problem on UrządzeniaEdit(addSmartPlug) with the fetch operation:', error);
+                console.error('There was a problem on UrządzeniaEdit(editSmartPlug) with the fetch operation:', error);
 
             }
         };
@@ -121,7 +163,7 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
         >
             <View style={styles.modalBackground}>
                 <View style={styles.modalView}>
-                    <Text style={styles.modalText}>Dodaj {selectedDevice}</Text>
+                    <Text style={styles.modalText}>Edytuj {selectedDevice.name}</Text>
                     <TextInput
                         style={styles.input}
                         onChangeText={setNazwa}
@@ -137,8 +179,13 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
                     />
                     <TextInput
                         style={styles.input}
-                        onChangeText={setCost}
-                        value={cost}
+                        onChangeText={(text) => {
+                          const value = parseFloat(text);
+                          if (!isNaN(value)) {
+                            setCost(value);
+                          }
+                        }}
+                        value={parseFloat(cost).toString()}
                         placeholder="Taryfa"
                         keyboardType="numeric"
                     />
