@@ -22,7 +22,7 @@ const WszystkieUrzadzenia = ({ accountId }) => {
         });
 
         if (userId) {
-            fetch(`${BACKEND_API_URL}/api/account/${userId}/device/`)//### Ten użytkownik nr 1 jest na sztywno
+            fetch(`${BACKEND_API_URL}/api/account/${userId}/device/`)
                 .then(response => response.json())
                 .then(data => {
                     setDevices(data); // Assuming the server response is the array of devices

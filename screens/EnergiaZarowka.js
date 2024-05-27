@@ -13,7 +13,7 @@ const EnergiaZarowka = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { device } = route.params;
-    const [rawDataWeek, setRawDataWeek] = useState([{"day":1,"average_consumption":10},{"day":2,"average_consumption":15},{"day":3,"average_consumption":20},{"day":4,"average_consumption":30},{"day":5,"average_consumption":20},{"day":6,"average_consumption":15},{"day":7,"average_consumption": 10}]);
+    const [rawDataWeek, setRawDataWeek] = useState([{"day_of_week":1,"average_consumption":0},{"day_of_week":2,"average_consumption":0},{"day_of_week":3,"average_consumption":0},{"day_of_week":4,"average_consumption":0},{"day_of_week":5,"average_consumption":0},{"day_of_week":6,"average_consumption":0},{"day_of_week":7,"average_consumption": 0}]);
     const [rawDataMonth, setRawDataMonth] = useState([ { "month": 1, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 2, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 3, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 4, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 5, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 6, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 7, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 8, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 9, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 10, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 11, "consumption": 0, "total_consumption_kwh": 0 }, { "month": 12, "consumption": 0, "total_consumption_kwh": 0 } ]);
     const [rawDataHour, setRawDataHour] = useState([ { "hour": 0, "average_consumption": 0 }, { "hour": 1, "average_consumption": 0 }, { "hour": 2, "average_consumption": 0 }, { "hour": 3, "average_consumption": 0 }, { "hour": 4, "average_consumption": 0 }, { "hour": 5, "average_consumption": 0 }, { "hour": 6, "average_consumption": 0 }, { "hour": 7, "average_consumption": 0 }, { "hour": 8, "average_consumption": 0 }, { "hour": 9, "average_consumption": 0 }, { "hour": 10, "average_consumption": 0 }, { "hour": 11, "average_consumption": 0 }, { "hour": 12, "average_consumption": 0 }, { "hour": 13, "average_consumption": 0 }, { "hour": 14, "average_consumption": 0 }, { "hour": 15, "average_consumption": 0 }, { "hour": 16, "average_consumption": 0 }, { "hour": 17, "average_consumption": 0 }, { "hour": 18, "average_consumption": 0 }, { "hour": 19, "average_consumption": 0 }, { "hour": 20, "average_consumption": 0 }, { "hour": 21, "average_consumption": 0 }, { "hour": 22, "average_consumption": 0 }, { "hour": 23, "average_consumption": 0 } ]);
     const [userId, setUserId] = useState(null);
@@ -71,7 +71,7 @@ const chartConfig = {
     }, [userId]);
 
     const fetchRawDataWeek = async () => {
-                 const url = `${BACKEND_API_URL}/api/account/${userId}/daily`;
+                 const url = `${BACKEND_API_URL}/api/account/${userId}/device/${device.id}/daily`;
                  try {
                    const response = await fetch(url, {
                      method: 'GET',

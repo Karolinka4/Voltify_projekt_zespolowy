@@ -21,8 +21,8 @@ export default function Dom() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editRoom, setEditRoom] = useState(null);
   const [userId, setUserId] = useState(null);
+  const [refreshFlatList, setRefreshFlatList] = useState(false);
   const { key } = useFetchContext();
-
   useEffect(() => {
     // Przykład użycia funkcji odczytu danych
     getDataFromStorage('@myKey').then((data) => {
@@ -55,7 +55,7 @@ export default function Dom() {
     if (userId) {
       fetchRooms();
     }
-  }, [userId, modalVisible, key]);//TODO Test modalVisible
+  }, [userId, refreshFlatList, key]);//TODO Test modalVisible
 
   const handleAddRoom = (room) => {
     addRoomToServer(room);
@@ -89,20 +89,26 @@ export default function Dom() {
 
  const addRoomToServer = async(room) => {
     const url = `${BACKEND_API_URL}/api/account/${userId}/room/`;
-    let data = {
-        name: room.name,
-        photo: room.image
-    };
-    console.log(room.name);
-    console.log(room.image);
+    const formData = new FormData();
+
+    formData.append('name', room.name);
+    const partsUrl = room.image.split('/');
+    const fileNameByUrl = partsUrl[partsUrl.length - 1];
+
+    let photoUrl = room.image;
+    if(!room.image.startsWith('http:')){
+         photoUrl = `file://${room.image}`;
+         const photo = {
+            uri:  photoUrl,
+            type: 'image/png',
+            name: fileNameByUrl,
+         }
+         formData.append('photo', photo);
+    }
     try{
         const response = await fetch(url, {
         method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-
-            body: JSON.stringify(data),
+        body: formData,
         });
 
         if(!response.ok){
@@ -111,9 +117,12 @@ export default function Dom() {
 
         const responseData = await response.json();
         console.log(responseData);
+        setRefreshFlatList(prev => !prev);
     } catch(error){
-            console.error('There was a problem on Dom(addRoomToServer) with the fetch operation:', error);
-          }
+     console.error('There was a problem on Dom(addRoomToServer) with the fetch operation:', error);
+    }
+
+
   };
 
    const editRoomToServer = async(room) => {
@@ -150,37 +159,11 @@ export default function Dom() {
 
           const responseData = await response.json();
           console.log(responseData);
+          setRefreshFlatList(prev => !prev);
       } catch(error){
               console.error('There was a problem on Dom(editRoomToServer) with the fetch operation:', error);
             }
     };
-
-//    const editRoomToServer = async(room) => {
-//          const url = `${BACKEND_API_URL}/api/account/${userId}/room/${room.id}/`;
-//          let data = {
-//              name: room.name,
-//              photo: room.image
-//          };
-//          try{
-//              const response = await fetch(url, {
-//              method: 'PATCH',
-//              headers: {
-//              'Content-Type': 'application/json',
-//              },
-//
-//                  body: JSON.stringify(data),
-//              });
-//
-//              if(!response.ok){
-//                  throw new Error('Something went wrong on Dom(editRoomToServer): network error');
-//              }
-//
-//              const responseData = await response.json();
-//              console.log(responseData);
-//          } catch(error){
-//                  console.error('There was a problem on Dom(editRoomToServer) with the fetch operation:', error);
-//                }
-//        };
 
   const handleDeleteRoom = (roomId) => {
     deleteRoomFromServer(roomId);

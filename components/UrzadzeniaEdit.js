@@ -56,10 +56,14 @@ const UrzadzeniaEdit = ({ isVisible, onClose, selectedDevice, onEdit, onSave, on
                 if (!response.ok) {
                     throw new Error('Network response on UrzadzenieEdit(handleDelete) was not ok');
                 }
+                if (response.status === 204 || response.statusText === 'No Content') {
+                            console.log('Device deleted successfully by UrządzenieEdit(handleDelete)');
+                            onClose();
+                            return;
+                }
                 return response.json();
             })
             .then(data => {
-                console.log('Device deleted successfully by UrządzenieEdit(handleDelete)');
                 onClose();
             })
             .catch((error) => {

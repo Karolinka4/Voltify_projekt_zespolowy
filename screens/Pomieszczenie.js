@@ -32,27 +32,32 @@ const Pomieszczenie = ({ deviceData }) => {
     const [updatedDevices, setUpdatedDevices] = useState(devices);
     const [userId, setUserId] = useState(null);
     const { refreshData } = useFetchContext();
-    const [refreshing, setRefreshing] = useState(false);
-    const isMounted = useRef(false);
 
+     useEffect(() => {
+        getDataFromStorage('@myKey').then((data) => {
+            setUserId(data.Key);
+        });
+      }, []);
 
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        fetchData().then(() => setRefreshing(false));
-    }, []);
+    const fetchDevicesData = async () => {
+             const url = `${BACKEND_API_URL}/api/account/${userId}/room/${roomId}`;
+             try {
+               const response = await fetch(url, {
+                 method: 'GET',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+               });
+            if (!response.ok) {
+              throw new Error('Network response on DOM(fetchROoms) was not ok: ' + response);
+            }
 
-    useEffect(() => {
-        if (isMounted.current) {
-          if(isModalVisible == false)
-          {
-            //fetchDevicesData(); {/*Tutaj można dać pobieranie danych z backendu i aktualizacja updatedDevices, aby na bierząco się aktualizowały urządzenia */}
+            let roomData = await response.json();
+            setUpdatedDevices(roomData.devices);
+          } catch (error) {
+            console.error('There was a problem on DOM(fetchRooms) with the fetch operation:', error);
           }
-        } else {
-          isMounted.current = true;
-        }
-      }, [isModalVisible]); // Efekt zależny od zmiany `myState`
-
-
+        };
 
     return (
 
@@ -63,7 +68,7 @@ const Pomieszczenie = ({ deviceData }) => {
                     isVisible={isModalVisible}
                     onClose={() => {
                         setModalVisible(false);
-                        refreshData();
+                        fetchDevicesData();
                     }
                     }
                     selectedDevice={selectedDevice}
@@ -147,7 +152,7 @@ const Pomieszczenie = ({ deviceData }) => {
                         />
                         <Image
                             style={styles.gniazdkoIcon}
-                            resizeMode="cover"
+                             resizeMode="cover"
                             source={require("../assets/gniazdko.png")}
                         />
                         <Text style={[styles.arwka, styles.arwkaTypo]}>Gniazdko</Text>
@@ -158,9 +163,6 @@ const Pomieszczenie = ({ deviceData }) => {
                     data={updatedDevices}
                     numColumns={2}
                     keyExtractor={(item, index) => index.toString()}
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                    }
                     renderItem={({ item }) => {
                         let ComponentToRender = null;
                         if (item.device_type === 'SmartPlug') {
