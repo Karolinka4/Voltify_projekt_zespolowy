@@ -51,13 +51,27 @@ Interfejs aplikacji oraz jej prototyp zostały przygotowane w **Figmie**.
 ### Wybrane widoki aplikacji
 
 <p align="center">
-  <img src="images/figma-1.png" alt="Voltify - widok aplikacji" width="250">
+  <a width="622" height="535" alt="image" src="https://github.com/user-attachments/assets/e181cb6e-1673-4977-9388-f180b1b19ca4"> </a>a>
 </p>
 
 <p align="center">
-  <a href="images/figma-1.png">1</a> •
-  <a href="images/figma-2.png">2</a> •
-  <a href="images/figma-3.png">3</a>
+ <a width="696" height="297" alt="image" src="https://github.com/user-attachments/assets/9d9f3a83-41f4-4471-ba95-bfcc34b78b63">1</a>
+
+  <a width="747" height="440" alt="image" src="https://github.com/user-attachments/assets/8eb6e703-474d-4911-abad-788b678c81c1">2</a>
+  •
+  <a width="693" height="418" alt="image" src="https://github.com/user-attachments/assets/1e96480b-ad97-4288-aaeb-a3ada72a37a6">3</a>
+  •
+  <a width="625" height="783" alt="image" src="https://github.com/user-attachments/assets/a97ce702-5c08-4147-a73b-30d58976afb6">4</a>
+   •
+<a width="709" height="669" alt="image" src="https://github.com/user-attachments/assets/7dd6ea8a-86ae-4deb-9b9b-6d0fa315a50d">5</a>
+   •
+<a width="813" height="811" alt="image" src="https://github.com/user-attachments/assets/b95b5918-a246-4532-9665-d86ba5d6eb4e">6</a>
+ •
+<a width="741" height="725" alt="image" src="https://github.com/user-attachments/assets/c4a7a35f-0a3e-415e-bdc9-6f70b4b32009">7</a>
+ •
+<a width="500" height="486" alt="image" src="https://github.com/user-attachments/assets/fb9fa038-0e57-4d13-8758-6582e6b6d4d8">8</a>
+ •
+<a width="780" height="359" alt="image" src="https://github.com/user-attachments/assets/8d01e140-0e84-4e0b-95dd-36f3297c6dbc">9</a>
 </p>
 
 ---
