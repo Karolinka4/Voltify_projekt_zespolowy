@@ -75,7 +75,21 @@ W ramach projektu przygotowałam również identyfikację wizualną aplikacji, w
 ### Ulotka
 
 <p align="center">
-  <img src="images/ulotka.png" alt="Ulotka promocyjna aplikacji Voltify" width="500">
+  <img src="https://github.com/user-attachments/assets/f4283f0a-26b4-4860-ad40-2d27b28ab394"
+       alt="Voltify - widok aplikacji"
+       width="500">
+</p>
+
+<p align="center">
+  ←
+  <a href="https://github.com/user-attachments/assets/f4283f0a-26b4-4860-ad40-2d27b28ab394">1</a>
+  •
+  <a href="https://github.com/user-attachments/assets/cf01e2fe-2e54-472a-ae0c-c4bd3a9588da">2</a>
+  •
+  <a href="https://github.com/user-attachments/assets/f000bdf0-1c38-489d-8a29-5c3bb51b622c">3</a>
+  •
+  <a href="https://github.com/user-attachments/assets/30c8ea6f-823e-4330-8441-2e8ddcb65bd9">4</a>
+  →
 </p>
 
 ---
