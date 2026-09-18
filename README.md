@@ -51,9 +51,13 @@ Interfejs aplikacji oraz jej prototyp zostały przygotowane w **Figmie**.
 ### Wybrane widoki aplikacji
 
 <p align="center">
-  <img src="images/figma-1.png" alt="Voltify - widok aplikacji 1" width="250">
-  <img src="images/figma-2.png" alt="Voltify - widok aplikacji 2" width="250">
-  <img src="images/figma-3.png" alt="Voltify - widok aplikacji 3" width="250">
+  <img src="images/figma-1.png" alt="Voltify - widok aplikacji" width="250">
+</p>
+
+<p align="center">
+  <a href="images/figma-1.png">1</a> •
+  <a href="images/figma-2.png">2</a> •
+  <a href="images/figma-3.png">3</a>
 </p>
 
 ---
@@ -65,7 +69,7 @@ W ramach projektu przygotowałam również identyfikację wizualną aplikacji, w
 ### Logo
 
 <p align="center">
-  <img src="images/logo.png" alt="Logo aplikacji Voltify" width="350">
+  <img src="https://github.com/user-attachments/assets/42b98667-49cf-45b7-900e-045d160e2aca" alt="Logo aplikacji Voltify" width="488" height="368">
 </p>
 
 ### Ulotka
