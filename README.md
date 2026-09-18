@@ -46,7 +46,7 @@ Pozostałe elementy projektu zostały przygotowane wspólnie z pozostałymi czł
 
 Interfejs aplikacji oraz jej prototyp zostały przygotowane w **Figmie**.
 
-🔗 [Otwórz projekt aplikacji w Figmie](TUTAJ_WSTAW_LINK_DO_FIGMY)
+🔗 [Otwórz projekt aplikacji w Figmie](https://www.figma.com/proto/pk1NiUfH8Dj1pOOWfmE3xS/Licencjat?node-id=589-8932&t=guzRjSqLsrcWMTF6-0&scaling=scale-down&page-id=0%3A1&starting-point-node-id=552%3A3028)
 
 ### Wybrane widoki aplikacji
 
