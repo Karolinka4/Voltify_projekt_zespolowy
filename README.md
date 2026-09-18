@@ -1,12 +1,12 @@
-# ⚡ Voltify
+# Voltify
 
 **Projekt zespołowy — część frontendowa aplikacji mobilnej**
 
 ## Autor
 
-**[Imię i nazwisko]**  
-Kierunek: **[nazwa kierunku]**  
-Uczelnia: **[nazwa uczelni]**
+**Karolina Sumowska**  
+Kierunek: **Informatyka**  
+Uczelnia: **Uniwersytet Mikołaja Kopernika w Toruniu**
 
 ---
 
@@ -130,21 +130,6 @@ Po uruchomieniu serwera Expo:
 Repozytorium przedstawia frontendową część aplikacji mobilnej **Voltify**, którą samodzielnie zaprojektowałam i zaimplementowałam w ramach projektu zespołowego.
 
 Oprócz kodu aplikacji repozytorium zawiera również materiały prezentujące proces projektowania interfejsu oraz elementy identyfikacji wizualnej projektu.
-
----
-
-## Struktura materiałów graficznych
-
-Zdjęcia wykorzystane w README znajdują się w folderze `images`:
-
-```text
-images/
-├── figma-1.png
-├── figma-2.png
-├── figma-3.png
-├── logo.png
-└── ulotka.png
-```
 
 ---
 
